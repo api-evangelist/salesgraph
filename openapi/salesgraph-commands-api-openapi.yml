@@ -1,0 +1,179 @@
+openapi: 3.1.0
+info:
+  title: Salesgraph REST Audit Commands API
+  description: 'The same GTM research and audit engine behind the Salesgraph MCP server, exposed as a small REST API under `/api/v1`. Every endpoint uses API key authentication and returns markdown (`Content-Type: text/markdown`) on success; errors are returned as JSON. Synchronous commands (research, competitors, help) return the markdown result inline; asynchronous audits (gtm-audit, audit) return a run id to poll.
+
+    '
+  version: v1
+  contact:
+    name: Salesgraph Support
+    email: support@salesgraph.com
+    url: https://salesgraph.com/support
+  x-provenance:
+    generated: '2026-07-21'
+    method: generated
+    source: https://docs.salesgraph.com/reference/rest-api.md
+    note: 'Faithfully modeled from the published Salesgraph REST API reference. The provider''s own docs.salesgraph.com/api-reference/openapi.json is a Mintlify Plant Store placeholder and was NOT harvested; this spec captures the real documented /api/v1 surface.
+
+      '
+servers:
+- url: https://salesgraph.com
+  description: Production
+security:
+- bearerAuth: []
+- apiKeyAuth: []
+tags:
+- name: Commands
+  description: The command catalog and synchronous/asynchronous command execution.
+paths:
+  /api/v1/commands:
+    get:
+      operationId: listCommands
+      summary: List available commands
+      description: Returns the markdown command catalog (same content as the help tool).
+      tags:
+      - Commands
+      responses:
+        '200':
+          description: Markdown command catalog.
+          content:
+            text/markdown:
+              schema:
+                type: string
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /api/v1/commands/{command}:
+    post:
+      operationId: runCommand
+      summary: Run a command
+      description: 'Runs one of `research`, `competitors`, `gtm-audit`, `audit`, or `help`. Send the command''s arguments as a JSON body. Sync commands return 200 with markdown; async commands return 202 with a run id in the `X-Run-Id`/`X-Audit-Id` header.
+
+        '
+      tags:
+      - Commands
+      parameters:
+      - name: command
+        in: path
+        required: true
+        description: The command to run.
+        schema:
+          type: string
+          enum:
+          - research
+          - competitors
+          - gtm-audit
+          - audit
+          - help
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommandArguments'
+      responses:
+        '200':
+          description: Sync result returned as markdown.
+          content:
+            text/markdown:
+              schema:
+                type: string
+        '202':
+          description: Async run started; poll for the result.
+          headers:
+            X-Run-Id:
+              description: Run id for gtm-audit runs.
+              schema:
+                type: string
+            X-Audit-Id:
+              description: Run id for audit runs.
+              schema:
+                type: string
+            X-Run-Status:
+              description: Current run status.
+              schema:
+                type: string
+                example: running
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '428':
+          $ref: '#/components/responses/OnboardingRequired'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+components:
+  schemas:
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+          description: Machine-readable error code (e.g. unauthorized).
+    CommandArguments:
+      type: object
+      description: Command-specific arguments plus optional shared context.
+      properties:
+        topic:
+          type: string
+          description: Topic or company for the research command.
+        company:
+          type: string
+          description: Company name for the competitors command.
+        website:
+          type: string
+          description: Prospect website (domain or full URL) for the gtm-audit command.
+        userContext:
+          type: string
+          description: Optional extra context passed to the command.
+  responses:
+    Unauthorized:
+      description: Missing, malformed, or revoked API key.
+      headers:
+        WWW-Authenticate:
+          schema:
+            type: string
+            example: Bearer
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: unauthorized
+    BadRequest:
+      description: Invalid arguments.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Unknown command or run id (or an id belonging to another organization).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    OnboardingRequired:
+      description: Onboarding required — finish your org's sales profile before running audits.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    RateLimited:
+      description: Rate limited — back off and retry.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Send your Salesgraph API key as `Authorization: Bearer sg_live_...`.'
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+      description: 'Alternative header — send your Salesgraph API key as `x-api-key: sg_live_...`.'

@@ -1,0 +1,109 @@
+openapi: 3.1.0
+info:
+  title: Salesgraph REST Audit Runs API
+  description: 'The same GTM research and audit engine behind the Salesgraph MCP server, exposed as a small REST API under `/api/v1`. Every endpoint uses API key authentication and returns markdown (`Content-Type: text/markdown`) on success; errors are returned as JSON. Synchronous commands (research, competitors, help) return the markdown result inline; asynchronous audits (gtm-audit, audit) return a run id to poll.
+
+    '
+  version: v1
+  contact:
+    name: Salesgraph Support
+    email: support@salesgraph.com
+    url: https://salesgraph.com/support
+  x-provenance:
+    generated: '2026-07-21'
+    method: generated
+    source: https://docs.salesgraph.com/reference/rest-api.md
+    note: 'Faithfully modeled from the published Salesgraph REST API reference. The provider''s own docs.salesgraph.com/api-reference/openapi.json is a Mintlify Plant Store placeholder and was NOT harvested; this spec captures the real documented /api/v1 surface.
+
+      '
+servers:
+- url: https://salesgraph.com
+  description: Production
+security:
+- bearerAuth: []
+- apiKeyAuth: []
+tags:
+- name: Runs
+  description: Polling asynchronous audit runs.
+paths:
+  /api/v1/runs/{kind}/{id}:
+    get:
+      operationId: pollRun
+      summary: Poll an async run
+      description: 'Returns a status markdown line while running and the full result markdown once the run is `completed`. The `X-Run-Status` header carries the current status. Returns 404 if the id is unknown or belongs to another organization.
+
+        '
+      tags:
+      - Runs
+      parameters:
+      - name: kind
+        in: path
+        required: true
+        description: The run kind — `gtm-audit` or `audit`.
+        schema:
+          type: string
+          enum:
+          - gtm-audit
+          - audit
+      - name: id
+        in: path
+        required: true
+        description: The run id returned when the run started.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Run status line or, once completed, the full result markdown.
+          content:
+            text/markdown:
+              schema:
+                type: string
+          headers:
+            X-Run-Status:
+              description: Current run status (running, completed, failed).
+              schema:
+                type: string
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  responses:
+    NotFound:
+      description: Unknown command or run id (or an id belonging to another organization).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing, malformed, or revoked API key.
+      headers:
+        WWW-Authenticate:
+          schema:
+            type: string
+            example: Bearer
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: unauthorized
+  schemas:
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+          description: Machine-readable error code (e.g. unauthorized).
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Send your Salesgraph API key as `Authorization: Bearer sg_live_...`.'
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+      description: 'Alternative header — send your Salesgraph API key as `x-api-key: sg_live_...`.'
