@@ -1,0 +1,12 @@
+generated: '2026-07-21'
+method: generated
+source: openapi/salesgraph-openapi.yml
+skills:
+  - file: salesgraph-research-competitors.md
+    name: Research a company and map its competitors
+    api: openapi/salesgraph-openapi.yml
+    operations: [runCommand]
+  - file: salesgraph-gtm-audit.md
+    name: Run a GTM audit of a prospect and poll for the result
+    api: openapi/salesgraph-openapi.yml
+    operations: [runCommand, pollRun, startOrgAudit, pollOrgAudit]

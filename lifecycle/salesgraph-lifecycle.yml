@@ -1,0 +1,22 @@
+generated: '2026-07-21'
+method: searched
+source: https://docs.salesgraph.com/reference/rest-api
+versioning:
+  scheme: uri-path
+  current: v1
+  base_path: /api/v1
+  docs: https://docs.salesgraph.com/reference/rest-api
+updates:
+  url: https://salesgraph.com/updates
+  description: >
+    Public dated update log for customer-impacting product, infrastructure, availability,
+    security, and integration changes. See changelog/salesgraph-changelog.yml.
+deprecation:
+  policy_url: null
+  sunset_header: false
+  note: No deprecation policy or Sunset/Deprecation header support is documented.
+sla:
+  url: null
+  uptime_target: null
+status_page: null
+deprecated_operations: []

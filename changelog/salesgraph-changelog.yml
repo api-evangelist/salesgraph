@@ -1,0 +1,18 @@
+generated: '2026-07-21'
+method: searched
+source: https://salesgraph.com/updates
+title: Salesgraph Updates
+description: >
+  Dated communications for customer-impacting product, infrastructure, availability, security,
+  and integration changes. Customer-impacting changes are posted when customers need visibility,
+  action, or context.
+scheme: dated
+url: https://salesgraph.com/updates
+entries:
+  - date: '2026-06-10'
+    title: Customer update log available
+    highlights: >
+      Salesgraph now maintains a public update log for customer-facing system changes. No product
+      behavior changed; this page gives customers one public place to review dated
+      system-change communications.
+    breaking: false

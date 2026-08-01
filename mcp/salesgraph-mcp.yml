@@ -1,0 +1,57 @@
+generated: '2026-07-21'
+method: searched
+status: published
+source: https://docs.salesgraph.com/quickstart
+server:
+  name: salesgraph
+  transport: http
+  url: https://salesgraph.com/api/mcp
+  protocol: MCP streamable HTTP (JSON-RPC 2.0)
+  authentication:
+    scheme: bearer
+    header: 'Authorization: Bearer sg_live_...'
+    docs: https://docs.salesgraph.com/authentication
+  docs: https://docs.salesgraph.com
+  clients:
+    - name: Claude Code
+      install: 'claude mcp add --transport http salesgraph https://salesgraph.com/api/mcp --header "Authorization: Bearer sg_live_..."'
+    - name: Claude Desktop
+      docs: https://docs.salesgraph.com/clients/claude
+    - name: Cursor
+      docs: https://docs.salesgraph.com/clients/cursor
+tools:
+  - name: research
+    description: Cited markdown brief on any topic or company, from public data.
+    inputs: [topic]
+    mode: sync
+    docs: https://docs.salesgraph.com/tools/research
+  - name: competitors
+    description: Sourced list of a company's direct competitors.
+    inputs: [company]
+    mode: sync
+    docs: https://docs.salesgraph.com/tools/competitors
+  - name: gtm_audit
+    description: Org-aware GTM audit of a prospect's website. Long-running; poll get_run_status with kind "gtm-audit".
+    inputs: [website]
+    mode: async
+    docs: https://docs.salesgraph.com/tools/gtm-audit
+  - name: org_audit
+    description: Org-aware audit of your own org, from its sales profile. Long-running; poll get_run_status with kind "audit".
+    inputs: []
+    mode: async
+    docs: https://docs.salesgraph.com/tools/org-audit
+  - name: get_run_status
+    description: Poll an async run started by gtm_audit or org_audit; returns results when complete.
+    inputs: [kind, id]
+    mode: sync
+    docs: https://docs.salesgraph.com/tools/get-run-status
+  - name: list_capabilities
+    description: List which integrations are active for your organization.
+    inputs: []
+    mode: sync
+    docs: https://docs.salesgraph.com/tools/list-capabilities
+  - name: help
+    description: Catalog of available Salesgraph commands and how to use them.
+    inputs: []
+    mode: sync
+    docs: https://docs.salesgraph.com/tools/help

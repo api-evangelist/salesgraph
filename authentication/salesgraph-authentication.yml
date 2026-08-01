@@ -1,0 +1,26 @@
+generated: '2026-07-21'
+method: searched
+source: openapi/salesgraph-openapi.yml
+docs: https://docs.salesgraph.com/authentication
+key_format: sg_live_ prefix; shown once at creation; created at dashboard Settings -> API Keys; non-expiring but revocable
+scope: per-organization; async run ids are org-isolated
+summary:
+  types:
+  - apiKey
+  - http
+  api_key_in:
+  - header
+schemes:
+- name: bearerAuth
+  type: http
+  scheme: bearer
+  description: 'Send your Salesgraph API key as `Authorization: Bearer sg_live_...`.'
+  sources:
+  - openapi/salesgraph-openapi.yml
+- name: apiKeyAuth
+  type: apiKey
+  in: header
+  parameter: x-api-key
+  description: 'Alternative header — send your Salesgraph API key as `x-api-key: sg_live_...`.'
+  sources:
+  - openapi/salesgraph-openapi.yml

@@ -1,0 +1,18 @@
+{
+  "provider": "salesgraph",
+  "sources": [
+    "salesgraph-audit-api-openapi.yml",
+    "salesgraph-commands-api-openapi.yml",
+    "salesgraph-runs-api-openapi.yml"
+  ],
+  "outputs": [
+    "salesgraph-audit-api-openapi.yml",
+    "salesgraph-commands-api-openapi.yml",
+    "salesgraph-runs-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}

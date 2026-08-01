@@ -1,0 +1,24 @@
+generated: '2026-07-21'
+method: derived
+source: openapi/salesgraph-openapi.yml
+standards:
+  - id: oauth2
+    conforms: false
+    evidence: API-key auth only (bearer / x-api-key); no oauth2 securityScheme.
+  - id: oidc
+    conforms: false
+  - id: rfc9457-problem-details
+    conforms: false
+    evidence: 'Errors use a flat JSON { "error": "<code>" } envelope, not application/problem+json.'
+  - id: rfc9116-security-txt
+    conforms: false
+    evidence: /.well-known/security.txt returned 404.
+  - id: mcp
+    conforms: true
+    evidence: Published MCP streamable-HTTP server at https://salesgraph.com/api/mcp with 7 tools.
+  - id: rest
+    conforms: true
+    evidence: Documented /api/v1 REST surface mirroring the MCP tools.
+  - id: rfc6750-bearer
+    conforms: true
+    evidence: Authorization Bearer token with WWW-Authenticate Bearer on 401.

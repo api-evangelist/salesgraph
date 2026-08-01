@@ -1,0 +1,29 @@
+generated: '2026-07-21'
+method: searched
+host: https://salesgraph.com
+note: >
+  No genuine /.well-known/ documents are published. salesgraph.com is a Next.js SPA that answers
+  unknown /.well-known/ paths with a 307 redirect to the app shell (HTTP 200 text/html soft-404),
+  not real discovery documents. docs.salesgraph.com returns hard 404s. No SecurityTxt, OIDC, or
+  api-catalog pointer is wired.
+documents:
+  - path: /.well-known/security.txt
+    status: 307
+    real: false
+    file: null
+  - path: /.well-known/openid-configuration
+    status: 307
+    real: false
+    file: null
+  - path: /.well-known/oauth-authorization-server
+    status: 307
+    real: false
+    file: null
+  - path: /.well-known/api-catalog
+    status: 307
+    real: false
+    file: null
+  - path: /.well-known/ai-plugin.json
+    status: 307
+    real: false
+    file: null

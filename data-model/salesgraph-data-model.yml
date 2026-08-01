@@ -1,0 +1,36 @@
+generated: '2026-07-21'
+method: derived
+source: openapi/salesgraph-openapi.yml
+description: >
+  Entity graph derived from the Salesgraph REST/MCP surface. Salesgraph is command-oriented
+  rather than resource-oriented: commands produce markdown documents, and audits produce
+  long-running runs polled by id.
+entities:
+  - name: Command
+    description: A named capability (research, competitors, gtm-audit, audit, help) in the catalog.
+    key: command
+    operations: [listCommands, runCommand]
+  - name: Run
+    description: An asynchronous audit execution, identified by a run id and a kind (gtm-audit | audit).
+    key: id
+    fields: [id, kind, status]
+    statuses: [running, completed, failed]
+    operations: [pollRun, startOrgAudit, pollOrgAudit]
+    scope: organization
+  - name: Organization
+    description: The tenant an API key is scoped to; owns runs and the sales profile that gates audits.
+    key: org
+relationships:
+  - from: Run
+    to: Command
+    type: belongs_to
+    via: kind
+  - from: Run
+    to: Organization
+    type: belongs_to
+    via: org
+  - from: Command
+    to: Run
+    type: has_many
+    via: kind
+    note: Only async commands (gtm-audit, audit) produce runs.

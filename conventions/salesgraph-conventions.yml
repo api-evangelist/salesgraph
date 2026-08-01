@@ -1,0 +1,57 @@
+generated: '2026-07-21'
+method: searched
+source: https://docs.salesgraph.com/reference/rest-api
+description: >
+  Cross-cutting request/response semantics for the Salesgraph REST API and MCP server, captured
+  from the published docs and derived from the documented /api/v1 surface.
+authentication:
+  style: api-key
+  headers:
+    - 'Authorization: Bearer sg_live_...'
+    - 'x-api-key: sg_live_...'
+  scope: per-organization
+  docs: https://docs.salesgraph.com/authentication
+  see_also: authentication/salesgraph-authentication.yml
+response_format:
+  success_media_type: text/markdown
+  error_media_type: application/json
+  note: >
+    Every REST endpoint returns markdown on success (Content-Type text/markdown); errors are
+    returned as JSON objects with an `error` field.
+async:
+  model: run-and-poll
+  start: >
+    Async commands (gtm-audit, org audit) return HTTP 202 with a run id in the X-Run-Id or
+    X-Audit-Id header and X-Run-Status: running.
+  poll: GET /api/v1/runs/{kind}/{id} (or get_run_status MCP tool)
+  poll_interval: every 10-20 seconds; stop once status is completed or failed
+  status_header: X-Run-Status
+  statuses: [running, completed, failed]
+  scope: run ids are scoped to the organization; cross-org ids return not found
+  docs: https://docs.salesgraph.com/reference/async-runs
+idempotency:
+  supported: false
+  note: No idempotency-key header or contract is documented by Salesgraph.
+pagination:
+  supported: false
+  note: >
+    The API is command-oriented (research/competitors/audit) returning single markdown
+    documents; no list pagination is documented.
+versioning:
+  scheme: uri-path
+  current: v1
+  base_path: /api/v1
+error_envelope:
+  media_type: application/json
+  shape: '{ "error": "<code>" }'
+  see_also: errors/salesgraph-problem-types.yml
+rate_limiting:
+  scope: per-organization
+  signal: HTTP 429 rate-limit response
+  guidance: back off and retry; contact support@salesgraph.com for sustained high-volume needs
+  docs: https://docs.salesgraph.com/reference/errors
+onboarding_gate:
+  status: 428
+  note: >
+    Audit tools require a completed org sales profile; if onboarding is not finished the call
+    returns an Onboarding required message (HTTP 428 on REST) instead of starting a run.

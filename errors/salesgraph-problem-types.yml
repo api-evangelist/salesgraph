@@ -1,0 +1,44 @@
+generated: '2026-07-21'
+method: searched
+source: https://docs.salesgraph.com/reference/errors
+format: json-error
+envelope:
+  media_type: application/json
+  shape: '{ "error": "<code>" }'
+note: >
+  Salesgraph returns markdown on success and JSON errors on failure. Errors are NOT RFC 9457
+  problem+json; they are a flat { "error": "<code>" } envelope. Statuses derived from the
+  documented REST API responses and enriched from the errors reference.
+problems:
+  - status: 400
+    title: Invalid arguments
+    remediation: Supply the required fields documented on each tool/command page.
+    source_operation: openapi/salesgraph-openapi.yml#runCommand
+  - status: 401
+    error: unauthorized
+    title: Unauthorized
+    detail: Missing, malformed, or revoked API key. Response includes a WWW-Authenticate Bearer header.
+    remediation: Send a valid, non-revoked key as Authorization Bearer <key>.
+    source_operation: openapi/salesgraph-openapi.yml#runCommand
+  - status: 404
+    title: Not found
+    detail: >
+      Unknown command, or a run id that does not exist, belongs to a different organization, or
+      whose kind does not match how the run was started.
+    source_operation: openapi/salesgraph-openapi.yml#pollRun
+  - status: 428
+    title: Onboarding required
+    detail: The org's sales profile is not complete, so audit tools will not start a run.
+    remediation: Finish onboarding in the dashboard, then retry.
+    source_operation: openapi/salesgraph-openapi.yml#startOrgAudit
+  - status: 429
+    title: Rate limited
+    detail: Per-organization rate limit exceeded.
+    remediation: Back off and retry; contact support@salesgraph.com for sustained high volume.
+    source_operation: openapi/salesgraph-openapi.yml#runCommand
+  - status: 504
+    title: Audit wait timeout
+    detail: >
+      A synchronous org audit (wait=true) exceeded the server timeout. The run keeps going; poll
+      its id.
+    source_operation: openapi/salesgraph-openapi.yml#startOrgAudit

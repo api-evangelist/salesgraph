@@ -1,22 +1,160 @@
 aid: salesgraph
 name: Salesgraph
-description: Salesgraph is a company surfaced as a portfolio company of y-combinator and added to the
-  API Evangelist network as a stub for enrichment. This profile is a lead awaiting the enrichment pipeline.
+description: >-
+  Salesgraph is a Y Combinator-backed revenue automation platform that uses proactive AI agents
+  to accelerate enterprise sales cycles — automating pre-call research, discovery analysis,
+  follow-up communications, and collateral generation (business cases, mutual action plans, ROI
+  calculators) from a shared organizational context graph. Beyond the product, Salesgraph ships a
+  developer surface: a published MCP (Model Context Protocol) streamable-HTTP server at
+  salesgraph.com/api/mcp and an equivalent REST API under /api/v1, both API-key authenticated,
+  exposing GTM research and audit tools (research, competitors, gtm_audit, org_audit) that return
+  cited markdown. It integrates with Salesforce, HubSpot, Attio, Outreach, Salesloft, Gong, and
+  others, targeting mid-market and enterprise revenue teams in dev tools, SaaS, and cybersecurity.
 url: https://raw.githubusercontent.com/api-evangelist/salesgraph/refs/heads/main/apis.yml
 x-type: company
 x-source: vc-portfolio
 x-backed-by:
 - y-combinator
-x-tier: stub
-x-tier-reason: portfolio-lead
-specificationVersion: '0.20'
-created: '2026-07-17'
-modified: '2026-07-17'
 tags:
 - Company
-apis: []
+- Sales
+- Revenue Automation
+- Go-To-Market
+- AI Agents
+- MCP
+- Sales Intelligence
+- Competitive Intelligence
+- Research
+- Enterprise Sales
+accessModel:
+  pricing: unknown
+  onboarding: self-serve
+  trial: false
+  try_now: false
+  public: false
+  label: Self-serve signup
+  confidence: medium
+  source:
+  - authentication
+  generated: '2026-07-22'
+  method: derived
+specificationVersion: '0.20'
+image: https://salesgraph.com/opengraph-image
+created: '2026-07-17'
+modified: '2026-07-21'
+apis:
+- aid: salesgraph:salesgraph-audit-api
+  name: Salesgraph Audit API
+  description: The org audit shortcut.
+  humanURL: https://docs.salesgraph.com/reference/rest-api
+  baseURL: https://salesgraph.com/api/v1
+  tags:
+  - Audit
+  properties:
+  - type: OpenAPI
+    url: openapi/salesgraph-audit-api-openapi.yml
+  - type: Authentication
+    url: authentication/salesgraph-authentication.yml
+  - type: ErrorCatalog
+    url: errors/salesgraph-problem-types.yml
+  - type: Conventions
+    url: conventions/salesgraph-conventions.yml
+  - type: Lifecycle
+    url: lifecycle/salesgraph-lifecycle.yml
+  - type: Conformance
+    url: conformance/salesgraph-conformance.yml
+  - type: DataModel
+    url: data-model/salesgraph-data-model.yml
+- aid: salesgraph:salesgraph-commands-api
+  name: Salesgraph Commands API
+  description: The command catalog and synchronous/asynchronous command execution.
+  humanURL: https://docs.salesgraph.com/reference/rest-api
+  baseURL: https://salesgraph.com/api/v1
+  tags:
+  - Commands
+  properties:
+  - type: OpenAPI
+    url: openapi/salesgraph-commands-api-openapi.yml
+  - type: Authentication
+    url: authentication/salesgraph-authentication.yml
+  - type: ErrorCatalog
+    url: errors/salesgraph-problem-types.yml
+  - type: Conventions
+    url: conventions/salesgraph-conventions.yml
+  - type: Lifecycle
+    url: lifecycle/salesgraph-lifecycle.yml
+  - type: Conformance
+    url: conformance/salesgraph-conformance.yml
+  - type: DataModel
+    url: data-model/salesgraph-data-model.yml
+- aid: salesgraph:salesgraph-runs-api
+  name: Salesgraph Runs API
+  description: Polling asynchronous audit runs.
+  humanURL: https://docs.salesgraph.com/reference/rest-api
+  baseURL: https://salesgraph.com/api/v1
+  tags:
+  - Runs
+  properties:
+  - type: OpenAPI
+    url: openapi/salesgraph-runs-api-openapi.yml
+  - type: Authentication
+    url: authentication/salesgraph-authentication.yml
+  - type: ErrorCatalog
+    url: errors/salesgraph-problem-types.yml
+  - type: Conventions
+    url: conventions/salesgraph-conventions.yml
+  - type: Lifecycle
+    url: lifecycle/salesgraph-lifecycle.yml
+  - type: Conformance
+    url: conformance/salesgraph-conformance.yml
+  - type: DataModel
+    url: data-model/salesgraph-data-model.yml
+common:
+- type: DomainSecurity
+  url: security/salesgraph-domain-security.yml
+- type: DeveloperPortal
+  url: https://docs.salesgraph.com
+- type: Documentation
+  url: https://docs.salesgraph.com
+- type: APIReference
+  url: https://docs.salesgraph.com/reference/rest-api
+- type: GettingStarted
+  url: https://docs.salesgraph.com/quickstart
+- type: Authentication
+  url: authentication/salesgraph-authentication.yml
+- type: MCPServer
+  url: mcp/salesgraph-mcp.yml
+- type: LLMsTxt
+  url: llms/salesgraph-llms.txt
+- type: AgentSkill
+  url: skills/_index.yml
+- type: ErrorCatalog
+  url: errors/salesgraph-problem-types.yml
+- type: Conventions
+  url: conventions/salesgraph-conventions.yml
+- type: Lifecycle
+  url: lifecycle/salesgraph-lifecycle.yml
+- type: Conformance
+  url: conformance/salesgraph-conformance.yml
+- type: DataModel
+  url: data-model/salesgraph-data-model.yml
+- type: ChangeLog
+  url: changelog/salesgraph-changelog.yml
+- type: Support
+  url: https://salesgraph.com/support
+- type: Blog
+  url: https://salesgraph.com/blog
+- type: TermsOfService
+  url: https://salesgraph.com/terms
+- type: PrivacyPolicy
+  url: https://salesgraph.com/privacy
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
+x-enrichment:
+  date: '2026-07-21'
+  status: enriched
+  artifacts_added: 15
+  pass: local-v1
