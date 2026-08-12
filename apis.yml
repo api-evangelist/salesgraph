@@ -110,6 +110,8 @@ apis:
   - type: DataModel
     url: data-model/salesgraph-data-model.yml
 common:
+- type: Overlay
+  url: overlays/salesgraph-openapi-overlay.yaml
 - type: DomainSecurity
   url: security/salesgraph-domain-security.yml
 - type: DeveloperPortal
