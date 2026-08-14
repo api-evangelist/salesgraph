@@ -7,9 +7,15 @@ description: >-
   calculators) from a shared organizational context graph. Beyond the product, Salesgraph ships a
   developer surface: a published MCP (Model Context Protocol) streamable-HTTP server at
   salesgraph.com/api/mcp and an equivalent REST API under /api/v1, both API-key authenticated,
-  exposing GTM research and audit tools (research, competitors, gtm_audit, org_audit) that return
-  cited markdown. It integrates with Salesforce, HubSpot, Attio, Outreach, Salesloft, Gong, and
-  others, targeting mid-market and enterprise revenue teams in dev tools, SaaS, and cybersecurity.
+  exposing 19 tools across GTM research and audit commands (research, competitors, gtm_audit,
+  org_audit) that return cited markdown, and an OMS (Opportunity Management System) family that
+  returns JSON — searching, traversing and tracing the provenance of the organization's own
+  Accounts and Opportunities, and putting cost-capped continuous research watches on them. OMS
+  write intent always routes through a human approval request rather than a direct write. It also
+  serves an A2A agent card and a packaged Agent Skill from its docs host, and a public
+  unauthenticated status API. It integrates with Salesforce, HubSpot, Attio, Outreach, Salesloft,
+  Gong, and others, targeting mid-market and enterprise revenue teams in dev tools, SaaS, and
+  cybersecurity.
 url: https://raw.githubusercontent.com/api-evangelist/salesgraph/refs/heads/main/apis.yml
 x-type: company
 x-source: vc-portfolio
@@ -41,7 +47,7 @@ accessModel:
 specificationVersion: '0.20'
 image: https://salesgraph.com/opengraph-image
 created: '2026-07-17'
-modified: '2026-07-21'
+modified: '2026-08-13'
 apis:
 - aid: salesgraph:salesgraph-audit-api
   name: Salesgraph Audit API
@@ -109,6 +115,85 @@ apis:
     url: conformance/salesgraph-conformance.yml
   - type: DataModel
     url: data-model/salesgraph-data-model.yml
+- aid: salesgraph:salesgraph-oms-api
+  name: Salesgraph OMS API
+  description: >-
+    The Opportunity Management System — query the organization's own visible sales objects,
+    traverse their relationships, inspect where each value came from, and manage continuous,
+    cost-capped research watches on Accounts and Opportunities. The only Salesgraph endpoint
+    family that returns JSON rather than markdown, and the only one carrying an idempotency key.
+    Write intent is never applied directly: an action request returns 202 and waits for a human
+    to approve it.
+  humanURL: https://docs.salesgraph.com/reference/rest-api
+  baseURL: https://salesgraph.com/api/v1
+  tags:
+  - OMS
+  - Sales Data
+  - Research Watches
+  properties:
+  - type: OpenAPI
+    url: openapi/salesgraph-oms-api-openapi.yml
+  - type: Authentication
+    url: authentication/salesgraph-authentication.yml
+  - type: ErrorCatalog
+    url: errors/salesgraph-problem-types.yml
+  - type: Conventions
+    url: conventions/salesgraph-conventions.yml
+  - type: Idempotency
+    url: conventions/salesgraph-conventions.yml
+  - type: Lifecycle
+    url: lifecycle/salesgraph-lifecycle.yml
+  - type: Conformance
+    url: conformance/salesgraph-conformance.yml
+  - type: DataModel
+    url: data-model/salesgraph-data-model.yml
+  - type: RateLimits
+    url: rate-limits/salesgraph-rate-limits.yml
+- aid: salesgraph:salesgraph-status-api
+  name: Salesgraph Status API
+  description: >-
+    A public, unauthenticated JSON status endpoint at /api/status carrying the platform headline,
+    overall status, active incident count, a seven-component health array with per-component
+    lastCheckedAt timestamps, active incidents, and incident history. It is the same data the
+    human status page renders, and the only Salesgraph operation callable without an API key.
+  humanURL: https://salesgraph.com/status
+  baseURL: https://salesgraph.com/api
+  tags:
+  - Status
+  - Availability
+  properties:
+  - type: OpenAPI
+    url: openapi/salesgraph-status-api-openapi.yml
+  - type: StatusPage
+    url: https://salesgraph.com/status
+  - type: Lifecycle
+    url: lifecycle/salesgraph-lifecycle.yml
+  - type: Conformance
+    url: conformance/salesgraph-conformance.yml
+- aid: salesgraph:salesgraph-mcp-server
+  name: Salesgraph MCP Server
+  description: >-
+    The remote MCP streamable-HTTP server at salesgraph.com/api/mcp, authenticated with an
+    sg_live_ API key. It exposes 19 documented tools across three families — GTM commands
+    (research, competitors, gtm_audit, org_audit, get_run_status, list_capabilities, help), OMS
+    data tools, and human-approval action tools. There is no stdio package: the only agent
+    surface is this hosted endpoint.
+  humanURL: https://docs.salesgraph.com/tools/overview
+  baseURL: https://salesgraph.com/api/mcp
+  tags:
+  - MCP
+  - AI Agents
+  properties:
+  - type: MCPServer
+    url: mcp/salesgraph-mcp.yml
+  - type: ToolCrosswalk
+    url: mcp/salesgraph-tool-crosswalk.yml
+  - type: AgentCard
+    url: a2a/salesgraph-a2a.yml
+  - type: AgentSkill
+    url: skills/_index.yml
+  - type: Authentication
+    url: authentication/salesgraph-authentication.yml
 common:
 - type: Overlay
   url: overlays/salesgraph-openapi-overlay.yaml
@@ -150,13 +235,31 @@ common:
   url: https://salesgraph.com/terms
 - type: PrivacyPolicy
   url: https://salesgraph.com/privacy
+- type: ToolCrosswalk
+  url: mcp/salesgraph-tool-crosswalk.yml
+- type: AgentCard
+  url: a2a/salesgraph-a2a.yml
+- type: WellKnown
+  url: well-known/salesgraph-well-known.yml
+- type: Idempotency
+  url: conventions/salesgraph-conventions.yml
+- type: StatusPage
+  url: https://salesgraph.com/status
+- type: RateLimits
+  url: rate-limits/salesgraph-rate-limits.yml
+- type: Plans
+  url: plans/salesgraph-plans-pricing.yml
+- type: Packages
+  url: packages/salesgraph-packages.yml
+- type: Login
+  url: https://salesgraph.com/login
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 x-enrichment:
-  date: '2026-07-21'
+  date: '2026-08-13'
   status: enriched
-  artifacts_added: 15
+  artifacts_added: 11
   pass: local-v1
