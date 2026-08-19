@@ -1,24 +1,83 @@
-generated: '2026-07-21'
+generated: '2026-08-13'
 method: derived
-source: openapi/salesgraph-openapi.yml
+source: openapi/_original/salesgraph-openapi.yml + /.well-known probes
 standards:
   - id: oauth2
     conforms: false
     evidence: API-key auth only (bearer / x-api-key); no oauth2 securityScheme.
   - id: oidc
     conforms: false
+    evidence: /.well-known/openid-configuration is not served on any host.
   - id: rfc9457-problem-details
     conforms: false
     evidence: 'Errors use a flat JSON { "error": "<code>" } envelope, not application/problem+json.'
   - id: rfc9116-security-txt
     conforms: false
-    evidence: /.well-known/security.txt returned 404.
+    evidence: >
+      /.well-known/security.txt returns a 404 on docs.salesgraph.com and an HTML app shell (soft
+      200) on salesgraph.com and www.salesgraph.com. Re-probed 2026-08-13.
+  - id: rfc8414-oauth-authorization-server-metadata
+    conforms: false
+    evidence: Not served; the MCP server authenticates with a static API key, not OAuth.
   - id: mcp
     conforms: true
-    evidence: Published MCP streamable-HTTP server at https://salesgraph.com/api/mcp with 7 tools.
+    evidence: >
+      Published MCP streamable-HTTP server at https://salesgraph.com/api/mcp with 19 documented
+      tools. Live tools/list is auth-gated (401, WWW-Authenticate Bearer), which is itself
+      evidence the server is running.
+  - id: a2a
+    conforms: true
+    grade: conformant
+    evidence: >
+      A2A agent card served at https://docs.salesgraph.com/.well-known/agent-card.json (HTTP 200,
+      application/json). capabilities is an object, protocolVersion is present ("0.3"), skills is
+      an array — all three A2A 1.0.0 hard checks pass. Deviations: supportedInterfaces rather
+      than additionalInterfaces, and the card's url points at the documentation site rather than
+      an A2A JSON-RPC endpoint. See a2a/salesgraph-a2a.yml.
+  - id: agent-skills
+    conforms: true
+    evidence: >
+      Provider-published Agent Skill at
+      https://docs.salesgraph.com/.well-known/agent-skills/salesgraph/skill.md (HTTP 200,
+      text/markdown) with name/description frontmatter. Saved verbatim to
+      skills/salesgraph-published-skill.md.
+  - id: llms-txt
+    conforms: true
+    evidence: https://docs.salesgraph.com/llms.txt returns a valid llms.txt (HTTP 200), plus an llms-full.txt.
   - id: rest
     conforms: true
-    evidence: Documented /api/v1 REST surface mirroring the MCP tools.
+    evidence: Documented /api/v1 REST surface mirroring the MCP tools, plus a public /api/status endpoint.
   - id: rfc6750-bearer
     conforms: true
-    evidence: Authorization Bearer token with WWW-Authenticate Bearer on 401.
+    evidence: Authorization Bearer token with WWW-Authenticate Bearer on 401 (observed live, 2026-08-13).
+  - id: idempotency
+    conforms: partial
+    evidence: >
+      An idempotencyKey field on OMS watch creation only. No Idempotency-Key header, and no
+      idempotency contract on the command endpoints.
+  - id: cursor-pagination
+    conforms: true
+    evidence: >
+      OMS objects page with pageToken/nextPageToken; OMS watches page with cursor/nextCursor.
+      Terminated by null.
+compliance_program:
+  published: false
+  certifications: []
+  trust_center: null
+  note: >
+    No SOC 2, ISO 27001, PCI DSS, HIPAA, FedRAMP or comparable certification is published.
+    salesgraph.com/security, /trust and /compliance all return the WorkOS "Sign in" page rather
+    than a public page, and probe-security-programs.py found no trust center and no vulnerability
+    disclosure program on any host. The privacy policy and terms describe data handling in prose
+    but name no audited framework. No Compliance or TrustCenter pointer is wired — an honest
+    absence, not a missing probe.
+  evidence:
+    - url: https://salesgraph.com/security
+      http_status: 200
+      note: renders "Sign in"
+    - url: https://salesgraph.com/trust
+      http_status: 200
+      note: renders "Sign in"
+    - url: https://salesgraph.com/compliance
+      http_status: 200
+      note: renders "Sign in"

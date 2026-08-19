@@ -1,57 +1,201 @@
-generated: '2026-07-21'
+generated: '2026-08-13'
 method: searched
 status: published
-source: https://docs.salesgraph.com/quickstart
+source: https://docs.salesgraph.com/tools/overview
 server:
   name: salesgraph
   transport: http
   url: https://salesgraph.com/api/mcp
+  canonical_url: https://www.salesgraph.com/api/mcp
   protocol: MCP streamable HTTP (JSON-RPC 2.0)
   authentication:
     scheme: bearer
     header: 'Authorization: Bearer sg_live_...'
+    alternative_header: 'x-api-key: sg_live_...'
     docs: https://docs.salesgraph.com/authentication
   docs: https://docs.salesgraph.com
   clients:
-    - name: Claude Code
-      install: 'claude mcp add --transport http salesgraph https://salesgraph.com/api/mcp --header "Authorization: Bearer sg_live_..."'
-    - name: Claude Desktop
-      docs: https://docs.salesgraph.com/clients/claude
-    - name: Cursor
-      docs: https://docs.salesgraph.com/clients/cursor
+  - name: Claude Code
+    install: 'claude mcp add --transport http salesgraph https://salesgraph.com/api/mcp --header "Authorization:
+      Bearer sg_live_..."'
+  - name: Claude Desktop
+    docs: https://docs.salesgraph.com/clients/claude
+  - name: Cursor
+    docs: https://docs.salesgraph.com/clients/cursor
+  - name: Raw HTTP / JSON-RPC
+    docs: https://docs.salesgraph.com/clients/http
+deployment:
+  mode: remote
+  endpoint: https://salesgraph.com/api/mcp
+  install: null
+  package: null
+  auth: api-key
+  verified: probed
+  probe: gated
+  checked: '2026-08-13'
+  note: >
+    POST tools/list to https://salesgraph.com/api/mcp returns HTTP 307 to
+    https://www.salesgraph.com/api/mcp, which returns HTTP 401 {"error":"unauthorized"} with a
+    WWW-Authenticate: Bearer header — the server is live and the endpoint is real, but the tool
+    list requires an API key. Tool names, inputs, and sync/async mode below are taken from the
+    published tools overview and the provider's own Agent Skill, NOT from an authenticated
+    tools/list; per-tool JSON inputSchemas still require authenticated introspection.
+  no_stdio_package: >
+    Salesgraph ships no npx/pip MCP package. The only agent surface is the hosted remote
+    endpoint above.
+response_shape:
+  commands: >
+    Command tools return markdown in the standard MCP `content` text-block format.
+  oms: >
+    OMS tools additionally return `structuredContent` — `{ "result": ... }` on success and
+    `{ "error": { "code": ... } }` on failure — with the same JSON in the text block.
 tools:
-  - name: research
-    description: Cited markdown brief on any topic or company, from public data.
-    inputs: [topic]
-    mode: sync
-    docs: https://docs.salesgraph.com/tools/research
-  - name: competitors
-    description: Sourced list of a company's direct competitors.
-    inputs: [company]
-    mode: sync
-    docs: https://docs.salesgraph.com/tools/competitors
-  - name: gtm_audit
-    description: Org-aware GTM audit of a prospect's website. Long-running; poll get_run_status with kind "gtm-audit".
-    inputs: [website]
-    mode: async
-    docs: https://docs.salesgraph.com/tools/gtm-audit
-  - name: org_audit
-    description: Org-aware audit of your own org, from its sales profile. Long-running; poll get_run_status with kind "audit".
-    inputs: []
-    mode: async
-    docs: https://docs.salesgraph.com/tools/org-audit
-  - name: get_run_status
-    description: Poll an async run started by gtm_audit or org_audit; returns results when complete.
-    inputs: [kind, id]
-    mode: sync
-    docs: https://docs.salesgraph.com/tools/get-run-status
-  - name: list_capabilities
-    description: List which integrations are active for your organization.
-    inputs: []
-    mode: sync
-    docs: https://docs.salesgraph.com/tools/list-capabilities
-  - name: help
-    description: Catalog of available Salesgraph commands and how to use them.
-    inputs: []
-    mode: sync
-    docs: https://docs.salesgraph.com/tools/help
+- name: research
+  description: Cited markdown brief on any topic or company, from public data.
+  inputs:
+  - topic
+  mode: sync
+  category: commands
+  docs: https://docs.salesgraph.com/tools/research
+- name: competitors
+  description: Sourced list of a company's direct competitors.
+  inputs:
+  - company
+  mode: sync
+  category: commands
+  docs: https://docs.salesgraph.com/tools/competitors
+- name: gtm_audit
+  description: Org-aware GTM audit of a prospect's website. Long-running; poll get_run_status with kind
+    "gtm-audit".
+  inputs:
+  - website
+  mode: async
+  category: commands
+  docs: https://docs.salesgraph.com/tools/gtm-audit
+- name: org_audit
+  description: Org-aware audit of your own org, from its sales profile. Long-running; poll get_run_status
+    with kind "audit".
+  inputs: []
+  mode: async
+  category: commands
+  docs: https://docs.salesgraph.com/tools/org-audit
+- name: get_run_status
+  description: Poll an async run started by gtm_audit or org_audit; returns results when complete.
+  inputs:
+  - kind
+  - id
+  mode: sync
+  category: commands
+  docs: https://docs.salesgraph.com/tools/get-run-status
+- name: list_capabilities
+  description: List which integrations are active for your organization.
+  inputs: []
+  mode: sync
+  category: commands
+  docs: https://docs.salesgraph.com/tools/list-capabilities
+- name: help
+  description: Catalog of available Salesgraph commands and how to use them.
+  inputs: []
+  mode: sync
+  category: commands
+  docs: https://docs.salesgraph.com/tools/help
+- name: oms_metadata
+  description: Visible OMS ontology metadata — the object types, links, and properties the org can see.
+  inputs: []
+  mode: sync
+  category: oms
+  docs: https://docs.salesgraph.com/tools/overview
+- name: oms_search
+  description: Searches visible OMS objects of one type.
+  inputs:
+  - type
+  - query options
+  mode: sync
+  category: oms
+  docs: https://docs.salesgraph.com/tools/overview
+- name: oms_get
+  description: Gets one visible OMS object by type and public key.
+  inputs:
+  - type
+  - key
+  mode: sync
+  category: oms
+  docs: https://docs.salesgraph.com/tools/overview
+- name: oms_pivot
+  description: Traverses a visible OMS relationship in a given direction.
+  inputs:
+  - type
+  - key
+  - link
+  - direction
+  mode: sync
+  category: oms
+  docs: https://docs.salesgraph.com/tools/overview
+- name: oms_provenance
+  description: Returns visible object provenance — properties, relationships, and history with sources.
+  inputs:
+  - type
+  - key
+  mode: sync
+  category: oms
+  docs: https://docs.salesgraph.com/tools/overview
+- name: oms_watch_create
+  description: Creates a continuous Account or Opportunity research watch. Accepts an idempotencyKey.
+  inputs:
+  - watch request
+  mode: sync
+  category: oms
+  docs: https://docs.salesgraph.com/tools/overview
+- name: oms_watch_list
+  description: Lists manageable research watches.
+  inputs:
+  - pagination options
+  mode: sync
+  category: oms
+  docs: https://docs.salesgraph.com/tools/overview
+- name: oms_watch_get
+  description: Gets one manageable research watch by id.
+  inputs:
+  - id
+  mode: sync
+  category: oms
+  docs: https://docs.salesgraph.com/tools/overview
+- name: oms_watch_cancel
+  description: Cancels one manageable research watch by id.
+  inputs:
+  - id
+  mode: sync
+  category: oms
+  docs: https://docs.salesgraph.com/tools/overview
+- name: oms_request_update_opportunity
+  description: Requests a human-approved opportunity update. Nothing is written until a person approves.
+  inputs:
+  - approval request
+  mode: sync
+  category: oms-actions
+  docs: https://docs.salesgraph.com/tools/overview
+- name: oms_request_log_rep_note
+  description: Requests a human-approved rep note. Nothing is written until a person approves.
+  inputs:
+  - approval request
+  mode: sync
+  category: oms-actions
+  docs: https://docs.salesgraph.com/tools/overview
+- name: oms_request_draft_followup_email
+  description: Requests a human-approved follow-up email draft. Nothing is sent until a person approves.
+  inputs:
+  - approval request
+  mode: sync
+  category: oms-actions
+  docs: https://docs.salesgraph.com/tools/overview
+other_mcp_endpoints:
+- name: Mintlify documentation MCP
+  url: https://salesgraph.main-kill-isr.mintlify.me/mcp
+  discovered_at: https://docs.salesgraph.com/.well-known/mcp.json
+  authentication: none
+  first_party: false
+  note: >
+    Declared by the Mintlify docs platform, not by the Salesgraph product. It serves documentation
+    search over the docs site and is hosted on a mintlify.me subdomain, not a salesgraph.com host.
+    Recorded for completeness; it is NOT the Salesgraph API MCP server and is not wired as the
+    MCPServer pointer.

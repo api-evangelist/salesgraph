@@ -1,6 +1,6 @@
-generated: '2026-07-21'
+generated: '2026-08-13'
 method: searched
-source: https://docs.salesgraph.com/reference/rest-api
+source: https://salesgraph.com/status
 versioning:
   scheme: uri-path
   current: v1
@@ -18,5 +18,32 @@ deprecation:
 sla:
   url: null
   uptime_target: null
-status_page: null
+  note: >
+    No SLA or uptime target is published. The status page reports current component state only —
+    it publishes no historical uptime percentage.
+status_page:
+  url: https://salesgraph.com/status
+  status_api: https://salesgraph.com/api/status
+  authentication: none
+  media_type: application/json
+  first_published: '2026-06-10'
+  components: 7
+  component_ids: [web-app, public-site, auth, api, background-jobs, integrations, data-layer]
+  incident_history: published on the same page
+  scheduled_maintenance: published on the same page
+  note: >
+    Found in the 2026-08-13 round; it did not exist at the 2026-07-21 pass. Salesgraph runs its
+    own first-party status page rather than a hosted Statuspage/Instatus tenant, and pairs it
+    with an unauthenticated JSON endpoint at /api/status carrying overallStatus,
+    activeIncidentCount, a per-component array with lastCheckedAt, activeIncidents, and
+    incidentHistory. The status API is captured as an operation in
+    openapi/salesgraph-status-api-openapi.yml (getPlatformStatus).
+  evidence:
+    - url: https://salesgraph.com/status
+      http_status: 200
+      fetched: '2026-08-13'
+    - url: https://salesgraph.com/api/status
+      http_status: 200
+      content_type: application/json
+      fetched: '2026-08-13'
 deprecated_operations: []

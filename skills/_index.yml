@@ -1,12 +1,34 @@
-generated: '2026-07-21'
-method: generated
-source: openapi/salesgraph-openapi.yml
+generated: '2026-08-13'
+method: searched
+source: >
+  salesgraph-published-skill.md was fetched verbatim from the provider's own
+  https://docs.salesgraph.com/.well-known/agent-skills/salesgraph/skill.md (HTTP 200,
+  text/markdown, 2026-08-13) — it is the skill the provider's A2A agent card points at. The
+  remaining skills are generated from openapi/ and the published docs.
 skills:
+  - file: salesgraph-published-skill.md
+    name: Salesgraph
+    description: >
+      The provider's own packaged Agent Skill, saved verbatim. Covers the full MCP tool surface
+      (commands + OMS), API key handling, sync-vs-async decision guidance, workflows, gotchas,
+      and a verification checklist.
+    method: searched
+    source: https://docs.salesgraph.com/.well-known/agent-skills/salesgraph/skill.md
+    published_by: Salesgraph
+    api: openapi/_original/salesgraph-openapi.yml
+    operations: [listCommands, runCommand, pollRun, startOrgAudit, pollOrgAudit, getOmsMetadata, searchOmsObjects, getOmsObject, pivotOmsObject, getOmsProvenance, createOmsWatch, listOmsWatches, cancelOmsWatch, requestOmsAction]
   - file: salesgraph-research-competitors.md
     name: Research a company and map its competitors
-    api: openapi/salesgraph-openapi.yml
+    method: generated
+    api: openapi/salesgraph-commands-api-openapi.yml
     operations: [runCommand]
   - file: salesgraph-gtm-audit.md
     name: Run a GTM audit of a prospect and poll for the result
-    api: openapi/salesgraph-openapi.yml
+    method: generated
+    api: openapi/salesgraph-commands-api-openapi.yml
     operations: [runCommand, pollRun, startOrgAudit, pollOrgAudit]
+  - file: salesgraph-oms-watch.md
+    name: Query the OMS graph and set up a continuous research watch
+    method: generated
+    api: openapi/salesgraph-oms-api-openapi.yml
+    operations: [getOmsMetadata, searchOmsObjects, getOmsObject, pivotOmsObject, getOmsProvenance, createOmsWatch, listOmsWatches, cancelOmsWatch]

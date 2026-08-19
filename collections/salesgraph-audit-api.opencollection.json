@@ -1,0 +1,66 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Salesgraph REST Audit API",
+    "version": "v1"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Audit",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Poll an org audit by id",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://salesgraph.com/api/v1/audit",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "query",
+                "description": "The org audit run id."
+              }
+            ]
+          },
+          "docs": "Polls an existing org audit run by id."
+        },
+        {
+          "info": {
+            "name": "Start the org audit shortcut",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://salesgraph.com/api/v1/audit",
+            "params": [
+              {
+                "name": "wait",
+                "value": "",
+                "type": "query",
+                "description": "Block until the audit finishes and return the result inline."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Starts your org's audit. By default returns 202 with a run id to poll. Pass `{\"wait\": true}` (or `?wait=true`) to block until the audit finishes — this can take several minutes and returns 504 if it exceeds the server timeout (the run keeps going).\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

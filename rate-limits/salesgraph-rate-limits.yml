@@ -1,0 +1,48 @@
+generated: '2026-08-13'
+method: searched
+source: https://docs.salesgraph.com/reference/errors
+limit_count: 0
+rate_limits: []
+note: >
+  Salesgraph documents that rate limiting EXISTS but publishes no number, no window, and no
+  response headers. The errors reference states only that "audit and command endpoints are rate
+  limited per organization" and that exceeding the limit returns "a rate-limit response — back
+  off and retry", directing sustained high-volume users to support@salesgraph.com. The REST
+  reference's status table names 429 as the exhaustion status. Nothing publishes a quota, a
+  window, a burst allowance, a Retry-After value, or any X-RateLimit-*/RateLimit-* header, so an
+  agent cannot budget its calls or compute a correct backoff from the contract — it can only
+  retry and observe. limit_count is an honest zero, not a missing measurement.
+documented:
+  exists: true
+  scope: per-organization
+  applies_to: [audit endpoints, command endpoints]
+  exhaustion_status: 429
+  response_headers: none documented
+  retry_after: not documented
+  window: not documented
+  limit: not documented
+  burst: not documented
+  guidance: back off and retry; contact support@salesgraph.com for sustained high-volume needs
+related_ceilings:
+  - name: OMS research-watch monthly cost cap
+    field: monthlyCostCapMicros
+    surface: POST /api/v1/oms/watches
+    lite: 3000 to 100000000 micros per month
+    base: 10000 to 100000000 micros per month
+    note: >
+      A spend ceiling, not a request-rate limit — recorded here because it is the only published
+      numeric bound on how much work an agent may cause Salesgraph to do. The caller sets it.
+  - name: Source-policy domain cap
+    surface: POST /api/v1/oms/watches
+    limit: 25 domains per include list and 25 per exclude list, no overlap
+  - name: Async poll cadence guidance
+    surface: GET /api/v1/runs/{kind}/{id}
+    guidance: poll every 10-20 seconds; avoid tight loops
+    note: Published guidance, not an enforced limit.
+evidence:
+  - url: https://docs.salesgraph.com/reference/errors
+    http_status: 200
+    fetched: '2026-08-13'
+  - url: https://docs.salesgraph.com/reference/rest-api
+    http_status: 200
+    fetched: '2026-08-13'

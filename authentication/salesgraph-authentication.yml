@@ -1,8 +1,29 @@
-generated: '2026-07-21'
+generated: '2026-08-13'
 method: searched
-source: openapi/salesgraph-openapi.yml
+source: https://docs.salesgraph.com/authentication
 docs: https://docs.salesgraph.com/authentication
 key_format: sg_live_ prefix; shown once at creation; created at dashboard Settings -> API Keys; non-expiring but revocable
+key_management_url: https://salesgraph.com/dashboard/settings/api-keys
+key_display_after_creation: short prefix only (e.g. sg_live_ab12...)
+revocation: immediate
+guidance: use a separate key per integration or environment so one can be revoked in isolation
+unauthorized_response:
+  status: 401
+  body: '{ "error": "unauthorized" }'
+  header: 'WWW-Authenticate: Bearer'
+  observed: '2026-08-13 against https://www.salesgraph.com/api/mcp'
+oauth: false
+oauth_note: >
+  No OAuth or OIDC anywhere on the surface — /.well-known/oauth-authorization-server,
+  /oauth-protected-resource and /openid-configuration are all unserved, and the MCP server
+  answers a static bearer API key rather than an OAuth challenge. No scopes/ artifact is written
+  because there is no scope surface to record. End-user login to the Salesgraph app itself uses
+  hosted WorkOS AuthKit, which is not part of the API contract.
+public_operations:
+  - operation: getPlatformStatus
+    path: /api/status
+    spec: openapi/salesgraph-status-api-openapi.yml
+    note: The only documented operation that requires no credential.
 scope: per-organization; async run ids are org-isolated
 summary:
   types:
@@ -16,11 +37,11 @@ schemes:
   scheme: bearer
   description: 'Send your Salesgraph API key as `Authorization: Bearer sg_live_...`.'
   sources:
-  - openapi/salesgraph-openapi.yml
+  - openapi/_original/salesgraph-openapi.yml
 - name: apiKeyAuth
   type: apiKey
   in: header
   parameter: x-api-key
   description: 'Alternative header — send your Salesgraph API key as `x-api-key: sg_live_...`.'
   sources:
-  - openapi/salesgraph-openapi.yml
+  - openapi/_original/salesgraph-openapi.yml

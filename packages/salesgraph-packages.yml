@@ -1,0 +1,62 @@
+generated: '2026-08-13'
+method: searched
+source: registry probes + https://docs.salesgraph.com
+package_count: 0
+packages: []
+note: >
+  Salesgraph publishes no client libraries in any public registry, and its docs offer none. This
+  is a deliberate posture rather than an omission: the product's stated integration path is the
+  hosted MCP server at https://salesgraph.com/api/mcp, which an MCP client speaks to natively,
+  plus "plain HTTP" for non-MCP callers — the REST reference explicitly frames itself as being
+  "here for simple scripts and non-MCP clients". There is also no npx/pip MCP package: the server
+  is remote-only, so there is nothing to install. No `SDKs` pointer is wired, because there is no
+  SDK to point at.
+registries_probed:
+  - registry: npm
+    query: exact names (salesgraph, salesgraph-sdk, salesgraph-mcp, @salesgraph/sdk, @salesgraph/mcp) and full-text search
+    result: 404 on every exact name; 0 results for the text search
+    version: null
+    published: null
+  - registry: pypi
+    query: salesgraph, salesgraph-sdk
+    result: 404
+    version: null
+    published: null
+  - registry: rubygems
+    query: salesgraph
+    result: 404
+    version: null
+    published: null
+  - registry: crates.io
+    query: salesgraph
+    result: no crate (registry answered 403 to the unauthenticated API call; the crate does not resolve)
+    version: null
+    published: null
+  - registry: nuget
+    query: salesgraph
+    result: 0 hits
+    version: null
+    published: null
+  - registry: maven-central
+    query: salesgraph
+    result: 0 hits
+    version: null
+    published: null
+  - registry: packagist
+    query: salesgraph/salesgraph
+    result: 404
+    version: null
+    published: null
+  - registry: go-modules
+    query: github.com/salesgraph/sdk
+    result: 404
+    version: null
+    published: null
+source_code:
+  github_org: null
+  note: >
+    api.github.com/orgs/salesgraph and /orgs/salesgraph-ai both return 404. A GitHub repository
+    search for "salesgraph" returns 21 results, none of them Salesgraph Inc. — they are unrelated
+    sales-dashboard and pandas-plotting student projects, plus this API Evangelist profile repo.
+    No first-party source is published, so no GitHubOrganization pointer is wired.
+checked: '2026-08-13'

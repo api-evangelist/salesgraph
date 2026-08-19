@@ -1,7 +1,13 @@
 openapi: 3.1.0
 info:
   title: Salesgraph REST Audit API
-  description: 'The same GTM research and audit engine behind the Salesgraph MCP server, exposed as a small REST API under `/api/v1`. Every endpoint uses API key authentication and returns markdown (`Content-Type: text/markdown`) on success; errors are returned as JSON. Synchronous commands (research, competitors, help) return the markdown result inline; asynchronous audits (gtm-audit, audit) return a run id to poll.
+  description: 'The same GTM research and audit engine behind the Salesgraph MCP server, exposed as a small REST
+    API under `/api/v1`. Command endpoints use API key authentication and return markdown (`Content-Type: text/markdown`)
+    on success; OMS endpoints return JSON; errors are returned as JSON. Synchronous commands (research, competitors,
+    help) return the markdown result inline; asynchronous audits (gtm-audit, audit) return a run id to poll. The
+    OMS (Opportunity Management System) endpoints query the organization''s own visible sales objects, traverse
+    their relationships, and manage continuous research watches. A separate unauthenticated Status API at `/api/status`
+    publishes component health.
 
     '
   version: v1
@@ -10,10 +16,14 @@ info:
     email: support@salesgraph.com
     url: https://salesgraph.com/support
   x-provenance:
-    generated: '2026-07-21'
+    generated: '2026-08-13'
     method: generated
     source: https://docs.salesgraph.com/reference/rest-api.md
-    note: 'Faithfully modeled from the published Salesgraph REST API reference. The provider''s own docs.salesgraph.com/api-reference/openapi.json is a Mintlify Plant Store placeholder and was NOT harvested; this spec captures the real documented /api/v1 surface.
+    note: 'Faithfully modeled from the published Salesgraph REST API reference plus the provider''s own Agent Skill
+      at docs.salesgraph.com/.well-known/agent-skills/salesgraph/skill.md. The provider''s docs.salesgraph.com/api-reference/openapi.json
+      is STILL a Mintlify "OpenAPI Plant Store" placeholder (re-probed 2026-08-13, HTTP 200) and was NOT harvested.
+      Round 2 added the OMS endpoints, the org-audit poll, and the public /api/status endpoint, all of which the
+      provider documented after the round-1 pass.
 
       '
 servers:
@@ -30,7 +40,9 @@ paths:
     post:
       operationId: startOrgAudit
       summary: Start the org audit shortcut
-      description: 'Starts your org''s audit. By default returns 202 with a run id to poll. Pass `{"wait": true}` (or `?wait=true`) to block until the audit finishes — this can take several minutes and returns 504 if it exceeds the server timeout (the run keeps going).
+      description: 'Starts your org''s audit. By default returns 202 with a run id to poll. Pass `{"wait": true}`
+        (or `?wait=true`) to block until the audit finishes — this can take several minutes and returns 504 if it
+        exceeds the server timeout (the run keeps going).
 
         '
       tags:
@@ -95,15 +107,25 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Send your Salesgraph API key as `Authorization: Bearer sg_live_...`.'
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+      description: 'Alternative header — send your Salesgraph API key as `x-api-key: sg_live_...`.'
   responses:
-    OnboardingRequired:
-      description: Onboarding required — finish your org's sales profile before running audits.
+    NotFound:
+      description: Unknown command or run id (or an id belonging to another organization).
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    NotFound:
-      description: Unknown command or run id (or an id belonging to another organization).
+    OnboardingRequired:
+      description: Onboarding required — finish your org's sales profile before running audits.
       content:
         application/json:
           schema:
@@ -129,14 +151,6 @@ components:
       properties:
         error:
           type: string
-          description: Machine-readable error code (e.g. unauthorized).
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      description: 'Send your Salesgraph API key as `Authorization: Bearer sg_live_...`.'
-    apiKeyAuth:
-      type: apiKey
-      in: header
-      name: x-api-key
-      description: 'Alternative header — send your Salesgraph API key as `x-api-key: sg_live_...`.'
+          description: 'Machine-readable error code — `unauthorized`, `invalid_input`, `access_denied`, or `not_found`.
+
+            '

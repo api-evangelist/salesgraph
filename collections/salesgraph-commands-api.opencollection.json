@@ -1,0 +1,58 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Salesgraph REST Audit Commands API",
+    "version": "v1"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Commands",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List available commands",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://salesgraph.com/api/v1/commands"
+          },
+          "docs": "Returns the markdown command catalog (same content as the help tool)."
+        },
+        {
+          "info": {
+            "name": "Run a command",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://salesgraph.com/api/v1/commands/:command",
+            "params": [
+              {
+                "name": "command",
+                "value": "",
+                "type": "path",
+                "description": "The command to run."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Runs one of `research`, `competitors`, `gtm-audit`, `audit`, or `help`. Send the command's arguments as a JSON body. Sync commands return 200 with markdown; async commands return 202 with a run id in the `X-Run-Id`/`X-Audit-Id` header.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

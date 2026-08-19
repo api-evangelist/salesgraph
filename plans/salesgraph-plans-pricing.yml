@@ -1,0 +1,40 @@
+generated: '2026-08-13'
+method: searched
+source: https://salesgraph.com/pricing
+plan_count: 0
+plans: []
+note: >
+  Salesgraph publishes no public pricing. https://salesgraph.com/pricing returns HTTP 200 but
+  renders the WorkOS AuthKit "Sign in" page rather than a plans table — the path exists only
+  behind authentication. The marketing site's navigation carries no pricing link at all (Home,
+  Industries, About, Dashboard, Careers, Updates, Support, legal), and the developer docs
+  describe API keys and quotas without naming a price or a free tier. Access is therefore
+  sales-led: an account, and any commercial terms, are negotiated rather than self-served from a
+  published catalog. No machine-readable pricing or catalog endpoint is served either.
+access:
+  model: sales-led
+  self_serve_signup: false
+  free_tier: unknown
+  trial: unknown
+  api_key_cost: not published
+observed_ceilings:
+  - name: OMS research-watch monthly cost cap
+    field: monthlyCostCapMicros
+    note: >
+      The only monetary unit Salesgraph exposes publicly. Watches are budgeted in micros per
+      month against a processor tier (lite from 3000, base from 10000, both to 100000000), which
+      implies metered consumption pricing on continuous research — but no rate card converting
+      micros to currency is published, so no plan can be derived from it.
+evidence:
+  - url: https://salesgraph.com/pricing
+    http_status: 200
+    note: renders the "Sign in" page, not a pricing table
+    fetched: '2026-08-13'
+  - url: https://salesgraph.com/
+    http_status: 200
+    note: no pricing link in navigation or footer
+    fetched: '2026-08-13'
+  - url: https://docs.salesgraph.com/quickstart
+    http_status: 200
+    note: API key creation documented; no price, tier, or quota stated
+    fetched: '2026-08-13'

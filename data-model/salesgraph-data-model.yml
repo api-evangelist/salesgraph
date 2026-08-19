@@ -1,10 +1,14 @@
-generated: '2026-07-21'
+generated: '2026-08-13'
 method: derived
-source: openapi/salesgraph-openapi.yml
+source: openapi/_original/salesgraph-openapi.yml
 description: >
-  Entity graph derived from the Salesgraph REST/MCP surface. Salesgraph is command-oriented
-  rather than resource-oriented: commands produce markdown documents, and audits produce
-  long-running runs polled by id.
+  Entity graph derived from the Salesgraph REST/MCP surface. Two distinct halves: a
+  command-oriented half where commands produce markdown documents and audits produce
+  long-running runs polled by id, and — added in the 2026-08-13 round — a resource-oriented OMS
+  (Opportunity Management System) half where the organization's own sales objects are searched,
+  traversed, and watched. Salesgraph does NOT publish the OMS object schemas: the visible
+  ontology is per-organization and is discovered at runtime through getOmsMetadata, so the OMS
+  entities below are recorded by name and key form only, not by field list.
 entities:
   - name: Command
     description: A named capability (research, competitors, gtm-audit, audit, help) in the catalog.
@@ -18,8 +22,56 @@ entities:
     operations: [pollRun, startOrgAudit, pollOrgAudit]
     scope: organization
   - name: Organization
-    description: The tenant an API key is scoped to; owns runs and the sales profile that gates audits.
+    description: The tenant an API key is scoped to; owns runs, OMS objects, and the sales profile that gates audits.
     key: org
+  - name: OmsOntology
+    description: >
+      The set of object types, links, and properties visible to this organization. Runtime-
+      discovered rather than published — an agent must read it before assuming any type or link
+      name exists.
+    operations: [getOmsMetadata]
+    scope: organization
+  - name: OmsObject
+    description: >
+      A visible sales object in the OMS graph. Documented instance types are Account and
+      Opportunity; the full type list is org-specific and comes from OmsOntology.
+    key: 'public key, of the form <namespace>:<value> (e.g. domain:acme.com)'
+    key_note: Internal primary keys are never accepted at the API boundary.
+    operations: [searchOmsObjects, getOmsObject, pivotOmsObject, getOmsProvenance]
+    page_shape: '{ objects: [], nextPageToken: string | null }'
+    scope: organization
+  - name: OmsProvenance
+    description: The lineage of one OmsObject — its properties, relationships, and history with sources.
+    fields: [properties, relationships, history]
+    operations: [getOmsProvenance]
+  - name: OmsWatch
+    description: >
+      A continuous, cost-capped research watch on an Account or Opportunity. Carries a schedule,
+      a processor tier, a monthly spend ceiling, and an optional source-domain policy.
+    key: id
+    fields: [id, target, query, purpose, frequency, processor, monthlyCostCapMicros, sourcePolicy, status, createdAt, updatedAt]
+    idempotency: idempotencyKey on create
+    operations: [createOmsWatch, listOmsWatches, cancelOmsWatch]
+    page_shape: '{ watches: [], nextCursor: string | null }'
+    scope: organization
+  - name: OmsActionRequest
+    description: >
+      A pending human-approval request produced by an agent's write intent — an opportunity
+      update, a rep note, or a follow-up email draft. Nothing is applied until approved.
+    operations: [requestOmsAction]
+    scope: organization
+  - name: PlatformStatus
+    description: >
+      The public, unauthenticated platform health document. The only entity in the model that is
+      not org-scoped and needs no API key.
+    fields: [generatedAt, updatedAt, headline, summary, overallStatus, activeIncidentCount, components, activeIncidents, incidentHistory]
+    operations: [getPlatformStatus]
+    scope: public
+  - name: StatusComponent
+    description: One monitored platform component.
+    key: id
+    fields: [id, name, description, status, lastCheckedAt]
+    instances: [web-app, public-site, auth, api, background-jobs, integrations, data-layer]
 relationships:
   - from: Run
     to: Command
@@ -34,3 +86,34 @@ relationships:
     type: has_many
     via: kind
     note: Only async commands (gtm-audit, audit) produce runs.
+  - from: OmsObject
+    to: Organization
+    type: belongs_to
+    via: org
+  - from: OmsObject
+    to: OmsObject
+    type: has_many
+    via: link
+    note: >
+      Traversed with pivotOmsObject by link name and direction; the available links come from
+      OmsOntology, not from a published schema.
+  - from: OmsObject
+    to: OmsProvenance
+    type: has_one
+    via: type+key
+  - from: OmsWatch
+    to: OmsObject
+    type: belongs_to
+    via: target
+    note: target is { type, key } and is restricted to Account or Opportunity.
+  - from: OmsActionRequest
+    to: OmsObject
+    type: belongs_to
+    via: the action payload
+    note: >
+      The discriminator that selects which of the three action shapes a request carries is not
+      published, so the binding is by tool name over MCP rather than by a documented field.
+  - from: PlatformStatus
+    to: StatusComponent
+    type: has_many
+    via: components

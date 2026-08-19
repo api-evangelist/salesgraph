@@ -1,6 +1,6 @@
 openapi: 3.1.0
 info:
-  title: Salesgraph REST Audit Runs API
+  title: Salesgraph Platform Status API
   description: 'The same GTM research and audit engine behind the Salesgraph MCP server, exposed as a small REST
     API under `/api/v1`. Command endpoints use API key authentication and return markdown (`Content-Type: text/markdown`)
     on success; OMS endpoints return JSON; errors are returned as JSON. Synchronous commands (research, competitors,
@@ -33,52 +33,27 @@ security:
 - bearerAuth: []
 - apiKeyAuth: []
 tags:
-- name: Runs
-  description: Polling asynchronous audit runs.
+- name: Status
+  description: Public, unauthenticated component health for the Salesgraph platform.
 paths:
-  /api/v1/runs/{kind}/{id}:
+  /api/status:
     get:
-      operationId: pollRun
-      summary: Poll an async run
-      description: 'Returns a status markdown line while running and the full result markdown once the run is `completed`.
-        The `X-Run-Status` header carries the current status. Returns 404 if the id is unknown or belongs to another
-        organization.
+      operationId: getPlatformStatus
+      summary: Get platform status
+      description: 'Public, unauthenticated component health for the Salesgraph platform — the same data the human
+        status page at https://salesgraph.com/status renders. No API key is required.
 
         '
       tags:
-      - Runs
-      parameters:
-      - name: kind
-        in: path
-        required: true
-        description: The run kind — `gtm-audit` or `audit`.
-        schema:
-          type: string
-          enum:
-          - gtm-audit
-          - audit
-      - name: id
-        in: path
-        required: true
-        description: The run id returned when the run started.
-        schema:
-          type: string
+      - Status
+      security: []
       responses:
         '200':
-          description: Run status line or, once completed, the full result markdown.
+          description: Current platform status.
           content:
-            text/markdown:
+            application/json:
               schema:
-                type: string
-          headers:
-            X-Run-Status:
-              description: Current run status (running, completed, failed).
-              schema:
-                type: string
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
+                $ref: '#/components/schemas/PlatformStatus'
 components:
   securitySchemes:
     bearerAuth:
@@ -90,34 +65,50 @@ components:
       in: header
       name: x-api-key
       description: 'Alternative header — send your Salesgraph API key as `x-api-key: sg_live_...`.'
-  responses:
-    NotFound:
-      description: Unknown command or run id (or an id belonging to another organization).
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing, malformed, or revoked API key.
-      headers:
-        WWW-Authenticate:
-          schema:
-            type: string
-            example: Bearer
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            error: unauthorized
   schemas:
-    Error:
+    PlatformStatus:
       type: object
-      required:
-      - error
+      description: Public platform status document.
       properties:
-        error:
+        generatedAt:
           type: string
-          description: 'Machine-readable error code — `unauthorized`, `invalid_input`, `access_denied`, or `not_found`.
-
-            '
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        headline:
+          type: string
+        summary:
+          type: string
+        overallStatus:
+          type: string
+          example: operational
+        activeIncidentCount:
+          type: integer
+        components:
+          type: array
+          items:
+            $ref: '#/components/schemas/StatusComponent'
+        activeIncidents:
+          type: array
+          items:
+            type: object
+        incidentHistory:
+          type: array
+          items:
+            type: object
+    StatusComponent:
+      type: object
+      description: One monitored platform component.
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+        lastCheckedAt:
+          type: string
+          format: date-time

@@ -1,0 +1,35 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Salesgraph Platform Status API",
+    "version": "v1"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Status",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get platform status",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://salesgraph.com/api/status"
+          },
+          "docs": "Public, unauthenticated component health for the Salesgraph platform — the same data the human status page at https://salesgraph.com/status renders. No API key is required.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

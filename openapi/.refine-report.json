@@ -3,16 +3,22 @@
   "sources": [
     "salesgraph-audit-api-openapi.yml",
     "salesgraph-commands-api-openapi.yml",
-    "salesgraph-runs-api-openapi.yml"
+    "salesgraph-oms-api-openapi.yml",
+    "salesgraph-runs-api-openapi.yml",
+    "salesgraph-status-api-openapi.yml"
   ],
   "outputs": [
     "salesgraph-audit-api-openapi.yml",
     "salesgraph-commands-api-openapi.yml",
-    "salesgraph-runs-api-openapi.yml"
+    "salesgraph-oms-api-openapi.yml",
+    "salesgraph-runs-api-openapi.yml",
+    "salesgraph-status-api-openapi.yml"
   ],
   "archived": [],
   "errors": [],
   "warnings": [],
-  "notes": [],
+  "notes": [
+    "2026-08-13 round-2 enrichment: re-split _original after adding the OMS tag (9 operations) and the public Status tag (1 operation) documented at docs.salesgraph.com/reference/rest-api and the provider Agent Skill."
+  ],
   "skipped": []
 }

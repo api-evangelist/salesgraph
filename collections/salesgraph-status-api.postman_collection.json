@@ -1,0 +1,121 @@
+{
+  "item": [
+    {
+      "id": "57196556-2ec5-41c5-ac9b-859ebb38bf64",
+      "name": "Status",
+      "description": {
+        "content": "Public, unauthenticated component health for the Salesgraph platform.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "dbcf582c-26ad-427c-8bab-207001b2c8c3",
+          "name": "Get platform status",
+          "request": {
+            "name": "Get platform status",
+            "description": {
+              "content": "Public, unauthenticated component health for the Salesgraph platform — the same data the human status page at https://salesgraph.com/status renders. No API key is required.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "status"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "f0b48450-b2d6-4662-a2fa-2c1538d03595",
+              "name": "Current platform status.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "status"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"generatedAt\": \"1986-10-06T08:34:28.263Z\",\n  \"updatedAt\": \"1981-10-07T08:16:23.821Z\",\n  \"headline\": \"string\",\n  \"summary\": \"string\",\n  \"overallStatus\": \"operational\",\n  \"activeIncidentCount\": 1456,\n  \"components\": [\n    {\n      \"id\": \"string\",\n      \"name\": \"string\",\n      \"description\": \"string\",\n      \"status\": \"string\",\n      \"lastCheckedAt\": \"1965-05-31T02:20:30.964Z\"\n    },\n    {\n      \"id\": \"string\",\n      \"name\": \"string\",\n      \"description\": \"string\",\n      \"status\": \"string\",\n      \"lastCheckedAt\": \"1953-01-15T06:32:00.111Z\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://salesgraph.com",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "f737733e-9d4d-46b4-be63-e2ff8759cd44",
+    "name": "Salesgraph Platform Status API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The same GTM research and audit engine behind the Salesgraph MCP server, exposed as a small REST API under `/api/v1`. Command endpoints use API key authentication and return markdown (`Content-Type: text/markdown`) on success; OMS endpoints return JSON; errors are returned as JSON. Synchronous commands (research, competitors, help) return the markdown result inline; asynchronous audits (gtm-audit, audit) return a run id to poll. The OMS (Opportunity Management System) endpoints query the organization's own visible sales objects, traverse their relationships, and manage continuous research watches. A separate unauthenticated Status API at `/api/status` publishes component health.\n\n\nContact Support:\n Name: Salesgraph Support\n Email: support@salesgraph.com",
+      "type": "text/plain"
+    }
+  }
+}

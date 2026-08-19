@@ -1,7 +1,7 @@
 ---
 name: Run a GTM audit of a prospect and poll for the result
 description: Use Salesgraph to start an org-aware go-to-market audit of a prospect's website, then poll the async run until the full markdown audit is ready.
-api: openapi/salesgraph-openapi.yml
+api: openapi/salesgraph-commands-api-openapi.yml
 operations: [runCommand, pollRun, startOrgAudit, pollOrgAudit]
 mcp_tools: [gtm_audit, org_audit, get_run_status]
 ---

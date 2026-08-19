@@ -1,4 +1,4 @@
-generated: '2026-07-21'
+generated: '2026-08-13'
 method: searched
 source: https://docs.salesgraph.com/reference/errors
 format: json-error
@@ -8,37 +8,70 @@ envelope:
 note: >
   Salesgraph returns markdown on success and JSON errors on failure. Errors are NOT RFC 9457
   problem+json; they are a flat { "error": "<code>" } envelope. Statuses derived from the
-  documented REST API responses and enriched from the errors reference.
+  documented REST API responses and enriched from the errors reference. Updated 2026-08-13 with
+  the OMS error codes (invalid_input, access_denied, not_found) the provider published in the
+  REST reference after the first pass, and with the corrected per-tag spec paths.
 problems:
   - status: 400
     title: Invalid arguments
     remediation: Supply the required fields documented on each tool/command page.
-    source_operation: openapi/salesgraph-openapi.yml#runCommand
+    source_operation: openapi/salesgraph-commands-api-openapi.yml#runCommand
   - status: 401
     error: unauthorized
     title: Unauthorized
     detail: Missing, malformed, or revoked API key. Response includes a WWW-Authenticate Bearer header.
     remediation: Send a valid, non-revoked key as Authorization Bearer <key>.
-    source_operation: openapi/salesgraph-openapi.yml#runCommand
+    source_operation: openapi/salesgraph-commands-api-openapi.yml#runCommand
   - status: 404
     title: Not found
     detail: >
       Unknown command, or a run id that does not exist, belongs to a different organization, or
       whose kind does not match how the run was started.
-    source_operation: openapi/salesgraph-openapi.yml#pollRun
+    source_operation: openapi/salesgraph-runs-api-openapi.yml#pollRun
   - status: 428
     title: Onboarding required
     detail: The org's sales profile is not complete, so audit tools will not start a run.
     remediation: Finish onboarding in the dashboard, then retry.
-    source_operation: openapi/salesgraph-openapi.yml#startOrgAudit
+    source_operation: openapi/salesgraph-audit-api-openapi.yml#startOrgAudit
   - status: 429
     title: Rate limited
     detail: Per-organization rate limit exceeded.
     remediation: Back off and retry; contact support@salesgraph.com for sustained high volume.
-    source_operation: openapi/salesgraph-openapi.yml#runCommand
+    source_operation: openapi/salesgraph-commands-api-openapi.yml#runCommand
   - status: 504
     title: Audit wait timeout
     detail: >
       A synchronous org audit (wait=true) exceeded the server timeout. The run keeps going; poll
       its id.
-    source_operation: openapi/salesgraph-openapi.yml#startOrgAudit
+    source_operation: openapi/salesgraph-audit-api-openapi.yml#startOrgAudit
+  - status: 400
+    error: invalid_input
+    title: Invalid OMS input
+    detail: >
+      An OMS request failed validation — for example a monthlyCostCapMicros below the processor
+      tier minimum (3000 lite / 10000 base), more than 25 domains in a source-policy list, or a
+      domain present in both the include and exclude lists.
+    remediation: Correct the payload against the documented bounds and retry.
+    source_operation: openapi/salesgraph-oms-api-openapi.yml#createOmsWatch
+  - status: 403
+    error: access_denied
+    title: OMS access denied
+    detail: The caller cannot see or manage the requested OMS object or watch.
+    remediation: >
+      Confirm the object is visible to this organization; OMS visibility is scoped per org and
+      per connected integration.
+    source_operation: openapi/salesgraph-oms-api-openapi.yml#getOmsObject
+  - status: 404
+    error: not_found
+    title: OMS object not found
+    detail: >
+      No visible OMS object matches the type and key. The most common cause is passing an
+      internal primary key instead of the PUBLIC key form (for example domain:acme.com).
+    remediation: Use the public OMS key documented in the ontology metadata.
+    source_operation: openapi/salesgraph-oms-api-openapi.yml#getOmsObject
+oms_envelope:
+  rest: '{ "error": "invalid_input" | "access_denied" | "not_found" }'
+  mcp: '{ "error": { "code": ... } }' # returned as structuredContent alongside the text block
+  note: >
+    OMS tools over MCP return structuredContent as well as a text block; successes are
+    { "result": ... } and failures { "error": { "code": ... } }.

@@ -1,7 +1,7 @@
 ---
 name: Research a company and map its competitors
 description: Use Salesgraph to produce a cited research brief on a company or topic and a sourced list of its direct competitors.
-api: openapi/salesgraph-openapi.yml
+api: openapi/salesgraph-commands-api-openapi.yml
 operations: [runCommand]
 mcp_tools: [research, competitors]
 ---

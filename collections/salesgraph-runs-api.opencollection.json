@@ -1,0 +1,49 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Salesgraph REST Audit Runs API",
+    "version": "v1"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Runs",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Poll an async run",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://salesgraph.com/api/v1/runs/:kind/:id",
+            "params": [
+              {
+                "name": "kind",
+                "value": "",
+                "type": "path",
+                "description": "The run kind — `gtm-audit` or `audit`."
+              },
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "The run id returned when the run started."
+              }
+            ]
+          },
+          "docs": "Returns a status markdown line while running and the full result markdown once the run is `completed`. The `X-Run-Status` header carries the current status. Returns 404 if the id is unknown or belongs to another organization.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,23 +1,79 @@
-generated: '2026-07-21'
+generated: '2026-08-13'
 method: searched
 source: https://docs.salesgraph.com/reference/rest-api
 description: >
   Cross-cutting request/response semantics for the Salesgraph REST API and MCP server, captured
-  from the published docs and derived from the documented /api/v1 surface.
+  from the published docs and derived from the documented /api/v1 surface. Updated 2026-08-13:
+  the OMS endpoints the provider published after the first pass introduce an idempotency key,
+  cursor pagination, and a JSON response family that the command endpoints do not have.
 authentication:
   style: api-key
   headers:
     - 'Authorization: Bearer sg_live_...'
     - 'x-api-key: sg_live_...'
   scope: per-organization
+  key_lifetime: non-expiring; revocable, revocation is immediate
   docs: https://docs.salesgraph.com/authentication
   see_also: authentication/salesgraph-authentication.yml
 response_format:
-  success_media_type: text/markdown
-  error_media_type: application/json
+  commands:
+    success_media_type: text/markdown
+    note: >
+      Command endpoints (commands, runs, audit) return markdown on success — Content-Type
+      text/markdown. Over MCP the same content arrives in the standard `content` text block.
+  oms:
+    success_media_type: application/json
+    note: >
+      OMS endpoints return JSON. Over MCP, OMS tools additionally return `structuredContent` —
+      `{ "result": ... }` on success and `{ "error": { "code": ... } }` on failure — with the
+      same JSON repeated in the text block.
+  errors:
+    media_type: application/json
+    note: Errors are JSON on every endpoint family.
+idempotency:
+  supported: true
+  mechanism: request-body field
+  field: idempotencyKey
+  scope: OMS research-watch creation (POST /api/v1/oms/watches, MCP oms_watch_create)
+  header: null
+  retention: not published
+  docs: https://docs.salesgraph.com/reference/rest-api
   note: >
-    Every REST endpoint returns markdown on success (Content-Type text/markdown); errors are
-    returned as JSON objects with an `error` field.
+    Salesgraph publishes exactly one idempotency contract and it is a body field, not a header:
+    `idempotencyKey` on the watch-create payload, so a retried create does not produce a second
+    watch. It does NOT extend to the command endpoints — a retried research, competitors,
+    gtm-audit or audit call starts new work. The safe-retry story for those is the async run id
+    instead: poll the existing run rather than re-issuing the start call.
+  changed_from_previous_round: >
+    The 2026-07-21 pass recorded idempotency as unsupported. That was correct for the surface
+    published at the time; the OMS watch API arrived afterwards.
+pagination:
+  supported: true
+  style: opaque cursor
+  variants:
+    - surface: OMS objects (search, pivot)
+      request_param: pageToken
+      response_field: nextPageToken
+      terminator: 'null'
+    - surface: OMS research watches (list)
+      request_param: cursor
+      response_field: nextCursor
+      terminator: 'null'
+  note: >
+    Two different cursor field names across two OMS families — nextPageToken on object pages,
+    nextCursor on watch pages. The command endpoints return a single markdown document and are
+    not paginated.
+field_expansion:
+  supported: false
+metadata:
+  supported: false
+request_tracing:
+  request_id_header: null
+  run_id_headers: [X-Run-Id, X-Audit-Id]
+  note: >
+    No general request-id header is documented. Async starts return a correlation id in
+    X-Run-Id (gtm-audit) or X-Audit-Id (audit), which is the only cross-call identifier
+    published.
 async:
   model: run-and-poll
   start: >
@@ -27,29 +83,48 @@ async:
   poll_interval: every 10-20 seconds; stop once status is completed or failed
   status_header: X-Run-Status
   statuses: [running, completed, failed]
+  kind_matching: >
+    gtm_audit runs poll with kind "gtm-audit"; org_audit runs poll with kind "audit". A mismatched
+    kind returns not found.
+  blocking_option: >
+    POST /api/v1/audit accepts {"wait": true} or ?wait=true to block for the result; it returns
+    504 if the wait exceeds the server timeout, and the run keeps going — poll its id.
   scope: run ids are scoped to the organization; cross-org ids return not found
   docs: https://docs.salesgraph.com/reference/async-runs
-idempotency:
-  supported: false
-  note: No idempotency-key header or contract is documented by Salesgraph.
-pagination:
-  supported: false
+human_in_the_loop:
+  supported: true
+  surface: POST /api/v1/oms/actions (MCP oms_request_* tools)
   note: >
-    The API is command-oriented (research/competitors/audit) returning single markdown
-    documents; no list pagination is documented.
+    OMS write intent is never applied directly. Requesting an opportunity update, a rep note, or
+    a follow-up email draft returns 202 with a JSON approval request; a person approves before
+    anything is written. Treat 202 as queued-for-a-human, not as success.
 versioning:
   scheme: uri-path
   current: v1
   base_path: /api/v1
+  note: The public status endpoint sits outside the version prefix, at /api/status.
 error_envelope:
   media_type: application/json
   shape: '{ "error": "<code>" }'
+  codes: [unauthorized, invalid_input, access_denied, not_found]
   see_also: errors/salesgraph-problem-types.yml
 rate_limiting:
   scope: per-organization
   signal: HTTP 429 rate-limit response
+  headers: none documented
+  published_limits: none
   guidance: back off and retry; contact support@salesgraph.com for sustained high-volume needs
   docs: https://docs.salesgraph.com/reference/errors
+  see_also: rate-limits/salesgraph-rate-limits.yml
+cost_controls:
+  surface: OMS research watches
+  field: monthlyCostCapMicros
+  bounds:
+    lite: 3000 to 100000000 micros per month
+    base: 10000 to 100000000 micros per month
+  note: >
+    A required per-watch monthly spend ceiling — unusual and worth recording: the caller, not the
+    provider, sets the cost bound on continuous agent work.
 onboarding_gate:
   status: 428
   note: >

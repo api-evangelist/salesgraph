@@ -1,31 +1,33 @@
 ---
-generated: 2026-07-21
+generated: 2026-08-13
 method: searched
 source: https://docs.salesgraph.com/llms.txt
+http_status: 200
 ---
+
 # Salesgraph
 
 > Connect any MCP client or agent to Salesgraph's GTM research and audit tools.
 
 ## Docs
 
+- [Salesgraph MCP](https://docs.salesgraph.com/index.md): Connect any MCP client or agent to Salesgraph's GTM research and audit tools.
+- [Quickstart](https://docs.salesgraph.com/quickstart.md): Create an API key and make your first tool call.
 - [Authentication](https://docs.salesgraph.com/authentication.md): How Salesgraph API keys work and how to send them.
 - [Connect Claude](https://docs.salesgraph.com/clients/claude.md): Add the Salesgraph MCP server to Claude Desktop or Claude Code.
 - [Connect Cursor](https://docs.salesgraph.com/clients/cursor.md): Add the Salesgraph MCP server to Cursor.
 - [Raw HTTP](https://docs.salesgraph.com/clients/http.md): Call the MCP server directly over JSON-RPC for testing or custom clients.
-- [Salesgraph MCP](https://docs.salesgraph.com/index.md): Connect any MCP client or agent to Salesgraph's GTM research and audit tools.
-- [Quickstart](https://docs.salesgraph.com/quickstart.md): Create an API key and make your first tool call.
+- [Tools overview](https://docs.salesgraph.com/tools/overview.md): Every tool the Salesgraph MCP server exposes.
+- [research](https://docs.salesgraph.com/tools/research.md): Research a topic from public sources and return a cited markdown brief.
+- [competitors](https://docs.salesgraph.com/tools/competitors.md): Find a company's direct competitors and return a sourced markdown list.
+- [gtm_audit](https://docs.salesgraph.com/tools/gtm-audit.md): Run an org-aware GTM audit of a prospect's website.
+- [org_audit](https://docs.salesgraph.com/tools/org-audit.md): Run your own organization's custom GTM audit.
+- [get_run_status](https://docs.salesgraph.com/tools/get-run-status.md): Poll an async run started by gtm_audit or org_audit.
+- [list_capabilities](https://docs.salesgraph.com/tools/list-capabilities.md): List which integrations are active for your organization.
+- [help](https://docs.salesgraph.com/tools/help.md): List the available Salesgraph commands and how to use them.
 - [Async runs](https://docs.salesgraph.com/reference/async-runs.md): How long-running audits start, report status, and return results.
 - [Errors & limits](https://docs.salesgraph.com/reference/errors.md): Error responses, onboarding gates, and rate limits.
 - [REST API](https://docs.salesgraph.com/reference/rest-api.md): Call the same commands over plain HTTP, without MCP.
-- [competitors](https://docs.salesgraph.com/tools/competitors.md): Find a company's direct competitors and return a sourced markdown list.
-- [get_run_status](https://docs.salesgraph.com/tools/get-run-status.md): Poll an async run started by gtm_audit or org_audit.
-- [gtm_audit](https://docs.salesgraph.com/tools/gtm-audit.md): Run an org-aware GTM audit of a prospect's website.
-- [help](https://docs.salesgraph.com/tools/help.md): List the available Salesgraph commands and how to use them.
-- [list_capabilities](https://docs.salesgraph.com/tools/list-capabilities.md): List which integrations are active for your organization.
-- [org_audit](https://docs.salesgraph.com/tools/org-audit.md): Run your own organization's custom GTM audit.
-- [Tools overview](https://docs.salesgraph.com/tools/overview.md): Every tool the Salesgraph MCP server exposes.
-- [research](https://docs.salesgraph.com/tools/research.md): Research a topic from public sources and return a cited markdown brief.
 
 ## OpenAPI Specs
 

@@ -1,0 +1,163 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Salesgraph REST OMS API",
+    "version": "v1"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "OMS",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get visible OMS metadata",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://salesgraph.com/api/v1/oms/metadata"
+          },
+          "docs": "Returns the visible OMS ontology metadata — the object types, links, and properties the calling organization can see. Responses are JSON.\n"
+        },
+        {
+          "info": {
+            "name": "Search visible OMS objects",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://salesgraph.com/api/v1/oms/search",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Searches the visible OMS objects of one type. Returns a page of objects plus a `nextPageToken` to continue, or `null` when the page is the last one.\n"
+        },
+        {
+          "info": {
+            "name": "Get one visible OMS object",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://salesgraph.com/api/v1/oms/get",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Fetches a single visible OMS object by its type and PUBLIC key (for example `domain:acme.com`) — not an internal primary key.\n"
+        },
+        {
+          "info": {
+            "name": "Traverse a visible OMS relationship",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://salesgraph.com/api/v1/oms/pivot",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Traverses a named link from one OMS object in a given direction — for example from an Account to its Opportunities. Returns a page of objects plus a `nextPageToken`.\n"
+        },
+        {
+          "info": {
+            "name": "Get visible object provenance",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://salesgraph.com/api/v1/oms/provenance",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Returns the data lineage of one OMS object — its properties, relationships, and history, with the sources each came from.\n"
+        },
+        {
+          "info": {
+            "name": "List research watches",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://salesgraph.com/api/v1/oms/watches",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "query",
+                "description": "Fetch a single watch by id instead of listing."
+              }
+            ]
+          },
+          "docs": "Lists the manageable continuous research watches for the organization. Pass `id` to fetch a single watch. Returns `{ watches, nextCursor }`.\n"
+        },
+        {
+          "info": {
+            "name": "Create a research watch",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://salesgraph.com/api/v1/oms/watches",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Creates a continuous research watch on an Account or Opportunity. Accepts an `idempotencyKey` so a retried create does not produce a duplicate watch. Frequencies run from `1h` through 30 days; `lite` watches require a monthly cost cap of at least 3000 micros and `base` watches at least 10000, both capped at 100000000. A source policy accepts up to 25 valid domains per include or exclude list, with no domain in both.\n"
+        },
+        {
+          "info": {
+            "name": "Cancel a research watch",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://salesgraph.com/api/v1/oms/watches",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "query",
+                "description": "The watch id to cancel."
+              }
+            ]
+          },
+          "docs": "Cancels one manageable research watch by id."
+        },
+        {
+          "info": {
+            "name": "Request an approved OMS action",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://salesgraph.com/api/v1/oms/actions",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Requests a human-approved OMS action — an opportunity update, a rep note, or a drafted follow-up email. Returns 202 with a JSON approval request; the action is not applied until a person approves it.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

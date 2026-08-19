@@ -1,0 +1,165 @@
+generated: '2026-08-13'
+method: derived
+source: >
+  Derived by binding the published MCP tool list (mcp/salesgraph-mcp.yml, from
+  docs.salesgraph.com/tools/overview and the provider Agent Skill) to the operationIds in
+  openapi/. The live MCP tools/list is auth-gated (HTTP 401), so no tool inputSchema was read
+  from the server; the binding below is by documented name and semantics, and every REST
+  operationId was verified present in the spec files.
+surfaces:
+  openapi:
+    files:
+      - openapi/_original/salesgraph-openapi.yml
+      - openapi/salesgraph-commands-api-openapi.yml
+      - openapi/salesgraph-runs-api-openapi.yml
+      - openapi/salesgraph-audit-api-openapi.yml
+      - openapi/salesgraph-oms-api-openapi.yml
+      - openapi/salesgraph-status-api-openapi.yml
+    base: https://salesgraph.com
+    gated: false
+    note: >
+      The spec is generated from the provider's published REST reference; the provider's own
+      /api-reference/openapi.json is a Mintlify Plant Store placeholder.
+  graphql: null
+  mcp:
+    url: https://salesgraph.com/api/mcp
+    gated: true
+    evidence: 'POST tools/list -> 307 to www.salesgraph.com/api/mcp -> 401 {"error":"unauthorized"}'
+crosswalk:
+  - tool: help
+    category: commands
+    rest: [listCommands]
+    binding: rest
+    confidence: high
+    note: The docs state GET /api/v1/commands returns the same content as the help tool.
+  - tool: research
+    category: commands
+    rest: [runCommand]
+    binding: rest
+    confidence: high
+    note: POST /api/v1/commands/research with { topic }.
+  - tool: competitors
+    category: commands
+    rest: [runCommand]
+    binding: rest
+    confidence: high
+    note: POST /api/v1/commands/competitors with { company }.
+  - tool: gtm_audit
+    category: commands
+    rest: [runCommand]
+    binding: rest
+    confidence: high
+    note: POST /api/v1/commands/gtm-audit with { website }; returns 202 + X-Run-Id.
+  - tool: org_audit
+    category: commands
+    rest: [runCommand, startOrgAudit]
+    binding: rest
+    confidence: high
+    note: >
+      Fans out to two operations — POST /api/v1/commands/audit and the POST /api/v1/audit
+      shortcut. Both start the same org audit.
+  - tool: get_run_status
+    category: commands
+    rest: [pollRun, pollOrgAudit]
+    binding: rest
+    confidence: high
+    note: >
+      GET /api/v1/runs/{kind}/{id} for either kind; GET /api/v1/audit?id= is the org-audit
+      shortcut form of the same poll.
+  - tool: oms_metadata
+    category: oms
+    rest: [getOmsMetadata]
+    binding: rest
+    confidence: high
+  - tool: oms_search
+    category: oms
+    rest: [searchOmsObjects]
+    binding: rest
+    confidence: high
+  - tool: oms_get
+    category: oms
+    rest: [getOmsObject]
+    binding: rest
+    confidence: high
+    note: The docs state object reads use the same object type and public key as MCP.
+  - tool: oms_pivot
+    category: oms
+    rest: [pivotOmsObject]
+    binding: rest
+    confidence: high
+  - tool: oms_provenance
+    category: oms
+    rest: [getOmsProvenance]
+    binding: rest
+    confidence: high
+  - tool: oms_watch_create
+    category: oms
+    rest: [createOmsWatch]
+    binding: rest
+    confidence: high
+    note: POST /api/v1/oms/watches; carries the idempotencyKey.
+  - tool: oms_watch_list
+    category: oms
+    rest: [listOmsWatches]
+    binding: rest
+    confidence: high
+  - tool: oms_watch_get
+    category: oms
+    rest: [listOmsWatches]
+    binding: rest
+    confidence: medium
+    note: >
+      No dedicated REST operation. The docs say GET /api/v1/oms/watches?id=<watch-id> fetches
+      one, so the single-watch read is a query-parameter mode of the list operation rather than
+      its own path.
+  - tool: oms_watch_cancel
+    category: oms
+    rest: [cancelOmsWatch]
+    binding: rest
+    confidence: high
+  - tool: oms_request_update_opportunity
+    category: oms-actions
+    rest: [requestOmsAction]
+    binding: rest
+    confidence: medium
+    note: >
+      All three approval-request tools collapse onto one REST operation,
+      POST /api/v1/oms/actions. The docs do not publish the discriminator field that selects
+      which action a request represents, so the per-action payload shape is not derivable from
+      the published surface.
+  - tool: oms_request_log_rep_note
+    category: oms-actions
+    rest: [requestOmsAction]
+    binding: rest
+    confidence: medium
+    note: Same collapsed POST /api/v1/oms/actions operation.
+  - tool: oms_request_draft_followup_email
+    category: oms-actions
+    rest: [requestOmsAction]
+    binding: rest
+    confidence: medium
+    note: Same collapsed POST /api/v1/oms/actions operation.
+mcp_only:
+  - tool: list_capabilities
+    reason: >
+      Reports which integrations are active for the organization. No REST path is published for
+      it — it is absent from the REST API inventory table at
+      docs.salesgraph.com/reference/rest-api. MCP-only capability.
+rest_only:
+  - capability: Platform status
+    operations: [getPlatformStatus]
+    reason: >
+      GET /api/status is public and unauthenticated; there is no MCP tool for it. An agent
+      checking whether Salesgraph is up must use REST, not the MCP server (which would need a
+      key and would be the thing that is down).
+coverage:
+  tools_named: 19
+  tools_bound: 18
+  mcp_only: 1
+  rest_ops_total: 15
+  rest_ops_with_a_tool: 14
+  rest_only: 1
+  note: >
+    Counts are of documented tools and of operations across all openapi/ files. runCommand backs
+    four separate tools and requestOmsAction backs three, so bound-tool count exceeds distinct
+    operation count in the command and action families.

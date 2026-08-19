@@ -1,29 +1,120 @@
-generated: '2026-07-21'
+generated: '2026-08-13'
 method: searched
-host: https://salesgraph.com
+hosts:
+  - https://salesgraph.com
+  - https://www.salesgraph.com
+  - https://docs.salesgraph.com
 note: >
-  No genuine /.well-known/ documents are published. salesgraph.com is a Next.js SPA that answers
-  unknown /.well-known/ paths with a 307 redirect to the app shell (HTTP 200 text/html soft-404),
-  not real discovery documents. docs.salesgraph.com returns hard 404s. No SecurityTxt, OIDC, or
-  api-catalog pointer is wired.
+  Round 2 (2026-08-13) found a REAL /.well-known/ surface that round 1 missed, on the
+  documentation host. docs.salesgraph.com serves an A2A agent card, a Mintlify MCP descriptor,
+  and a packaged Agent Skill — all HTTP 200 with real JSON/markdown bodies. The apex and www
+  hosts still serve nothing: salesgraph.com is a Next.js app that answers every unknown
+  /.well-known/* path with an HTTP 200 text/html app shell (a soft-404), so every one of those
+  200s is recorded as real: false and none of them earn a pointer. No security.txt is served on
+  any host, so no SecurityTxt pointer is wired.
 documents:
-  - path: /.well-known/security.txt
-    status: 307
+  # docs.salesgraph.com — real documents
+  - host: docs.salesgraph.com
+    path: /.well-known/agent-card.json
+    status: 200
+    content_type: application/json
+    real: true
+    file: ../a2a/salesgraph-agent-card.json
+    kind: A2A AgentCard
+    see_also: a2a/salesgraph-a2a.yml
+  - host: docs.salesgraph.com
+    path: /.well-known/mcp.json
+    status: 200
+    content_type: application/json
+    real: true
+    file: salesgraph-mcp.json
+    kind: MCP server descriptor
+    note: >
+      Declares the Mintlify documentation MCP at salesgraph.main-kill-isr.mintlify.me/mcp, not
+      the Salesgraph product MCP at salesgraph.com/api/mcp. Platform-generated, first_party
+      false — see mcp/salesgraph-mcp.yml.
+  - host: docs.salesgraph.com
+    path: /.well-known/agent-skills/salesgraph/skill.md
+    status: 200
+    content_type: text/markdown
+    real: true
+    file: ../skills/salesgraph-published-skill.md
+    kind: Agent Skill
+    note: The skill the agent card's skills[0].url points at.
+  # docs.salesgraph.com — misses
+  - host: docs.salesgraph.com
+    path: /.well-known/agent.json
+    status: 404
     real: false
-    file: null
-  - path: /.well-known/openid-configuration
-    status: 307
+  - host: docs.salesgraph.com
+    path: /.well-known/security.txt
+    status: 404
     real: false
-    file: null
-  - path: /.well-known/oauth-authorization-server
-    status: 307
+  - host: docs.salesgraph.com
+    path: /.well-known/openid-configuration
+    status: 404
     real: false
-    file: null
-  - path: /.well-known/api-catalog
-    status: 307
+  - host: docs.salesgraph.com
+    path: /.well-known/oauth-authorization-server
+    status: 404
     real: false
-    file: null
-  - path: /.well-known/ai-plugin.json
-    status: 307
+  - host: docs.salesgraph.com
+    path: /.well-known/oauth-protected-resource
+    status: 404
     real: false
-    file: null
+  - host: docs.salesgraph.com
+    path: /.well-known/api-catalog
+    status: 404
+    real: false
+  - host: docs.salesgraph.com
+    path: /.well-known/ai-plugin.json
+    status: 404
+    real: false
+  # salesgraph.com / www.salesgraph.com — soft-404 app shell on every path
+  - host: salesgraph.com
+    path: /.well-known/agent-card.json
+    status: 200
+    content_type: text/html
+    real: false
+    note: Next.js app-shell HTML, not a document.
+  - host: salesgraph.com
+    path: /.well-known/agent.json
+    status: 200
+    content_type: text/html
+    real: false
+  - host: salesgraph.com
+    path: /.well-known/security.txt
+    status: 200
+    content_type: text/html
+    real: false
+  - host: salesgraph.com
+    path: /.well-known/openid-configuration
+    status: 200
+    content_type: text/html
+    real: false
+  - host: salesgraph.com
+    path: /.well-known/oauth-authorization-server
+    status: 200
+    content_type: text/html
+    real: false
+  - host: salesgraph.com
+    path: /.well-known/oauth-protected-resource
+    status: 200
+    content_type: text/html
+    real: false
+  - host: salesgraph.com
+    path: /.well-known/api-catalog
+    status: 200
+    content_type: text/html
+    real: false
+  - host: salesgraph.com
+    path: /.well-known/ai-plugin.json
+    status: 200
+    content_type: text/html
+    real: false
+  - host: www.salesgraph.com
+    path: /.well-known/agent-card.json
+    status: 200
+    content_type: text/html
+    real: false
+    note: Same app-shell HTML as the apex host.

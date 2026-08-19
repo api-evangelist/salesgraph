@@ -1,7 +1,13 @@
 openapi: 3.1.0
 info:
   title: Salesgraph REST Audit Commands API
-  description: 'The same GTM research and audit engine behind the Salesgraph MCP server, exposed as a small REST API under `/api/v1`. Every endpoint uses API key authentication and returns markdown (`Content-Type: text/markdown`) on success; errors are returned as JSON. Synchronous commands (research, competitors, help) return the markdown result inline; asynchronous audits (gtm-audit, audit) return a run id to poll.
+  description: 'The same GTM research and audit engine behind the Salesgraph MCP server, exposed as a small REST
+    API under `/api/v1`. Command endpoints use API key authentication and return markdown (`Content-Type: text/markdown`)
+    on success; OMS endpoints return JSON; errors are returned as JSON. Synchronous commands (research, competitors,
+    help) return the markdown result inline; asynchronous audits (gtm-audit, audit) return a run id to poll. The
+    OMS (Opportunity Management System) endpoints query the organization''s own visible sales objects, traverse
+    their relationships, and manage continuous research watches. A separate unauthenticated Status API at `/api/status`
+    publishes component health.
 
     '
   version: v1
@@ -10,10 +16,14 @@ info:
     email: support@salesgraph.com
     url: https://salesgraph.com/support
   x-provenance:
-    generated: '2026-07-21'
+    generated: '2026-08-13'
     method: generated
     source: https://docs.salesgraph.com/reference/rest-api.md
-    note: 'Faithfully modeled from the published Salesgraph REST API reference. The provider''s own docs.salesgraph.com/api-reference/openapi.json is a Mintlify Plant Store placeholder and was NOT harvested; this spec captures the real documented /api/v1 surface.
+    note: 'Faithfully modeled from the published Salesgraph REST API reference plus the provider''s own Agent Skill
+      at docs.salesgraph.com/.well-known/agent-skills/salesgraph/skill.md. The provider''s docs.salesgraph.com/api-reference/openapi.json
+      is STILL a Mintlify "OpenAPI Plant Store" placeholder (re-probed 2026-08-13, HTTP 200) and was NOT harvested.
+      Round 2 added the OMS endpoints, the org-audit poll, and the public /api/status endpoint, all of which the
+      provider documented after the round-1 pass.
 
       '
 servers:
@@ -46,7 +56,9 @@ paths:
     post:
       operationId: runCommand
       summary: Run a command
-      description: 'Runs one of `research`, `competitors`, `gtm-audit`, `audit`, or `help`. Send the command''s arguments as a JSON body. Sync commands return 200 with markdown; async commands return 202 with a run id in the `X-Run-Id`/`X-Audit-Id` header.
+      description: 'Runs one of `research`, `competitors`, `gtm-audit`, `audit`, or `help`. Send the command''s
+        arguments as a JSON body. Sync commands return 200 with markdown; async commands return 202 with a run id
+        in the `X-Run-Id`/`X-Audit-Id` header.
 
         '
       tags:
@@ -104,45 +116,17 @@ paths:
         '429':
           $ref: '#/components/responses/RateLimited'
 components:
-  schemas:
-    Error:
-      type: object
-      required:
-      - error
-      properties:
-        error:
-          type: string
-          description: Machine-readable error code (e.g. unauthorized).
-    CommandArguments:
-      type: object
-      description: Command-specific arguments plus optional shared context.
-      properties:
-        topic:
-          type: string
-          description: Topic or company for the research command.
-        company:
-          type: string
-          description: Company name for the competitors command.
-        website:
-          type: string
-          description: Prospect website (domain or full URL) for the gtm-audit command.
-        userContext:
-          type: string
-          description: Optional extra context passed to the command.
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Send your Salesgraph API key as `Authorization: Bearer sg_live_...`.'
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+      description: 'Alternative header — send your Salesgraph API key as `x-api-key: sg_live_...`.'
   responses:
-    Unauthorized:
-      description: Missing, malformed, or revoked API key.
-      headers:
-        WWW-Authenticate:
-          schema:
-            type: string
-            example: Bearer
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            error: unauthorized
     BadRequest:
       description: Invalid arguments.
       content:
@@ -167,13 +151,43 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      description: 'Send your Salesgraph API key as `Authorization: Bearer sg_live_...`.'
-    apiKeyAuth:
-      type: apiKey
-      in: header
-      name: x-api-key
-      description: 'Alternative header — send your Salesgraph API key as `x-api-key: sg_live_...`.'
+    Unauthorized:
+      description: Missing, malformed, or revoked API key.
+      headers:
+        WWW-Authenticate:
+          schema:
+            type: string
+            example: Bearer
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: unauthorized
+  schemas:
+    CommandArguments:
+      type: object
+      description: Command-specific arguments plus optional shared context.
+      properties:
+        topic:
+          type: string
+          description: Topic or company for the research command.
+        company:
+          type: string
+          description: Company name for the competitors command.
+        website:
+          type: string
+          description: Prospect website (domain or full URL) for the gtm-audit command.
+        userContext:
+          type: string
+          description: Optional extra context passed to the command.
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+          description: 'Machine-readable error code — `unauthorized`, `invalid_input`, `access_denied`, or `not_found`.
+
+            '

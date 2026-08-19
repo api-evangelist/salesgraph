@@ -1,0 +1,76 @@
+generated: '2026-08-13'
+method: probed
+source: https://docs.salesgraph.com/.well-known/agent-card.json
+discovery:
+  path: /.well-known/agent-card.json
+  canonical: true
+  host: docs.salesgraph.com
+  note: >
+    Served from the documentation host, which Salesgraph controls (docs.salesgraph.com, a
+    Mintlify-hosted subdomain of salesgraph.com). The apex and www hosts do NOT serve a card:
+    salesgraph.com is a Next.js app that answers every /.well-known/* path with an HTTP 200 HTML
+    app shell (a soft-404), and that HTML was rejected rather than recorded as a hit. The legacy
+    /.well-known/agent.json path returns a hard 404 on the docs host.
+conformance:
+  spec: A2A 1.0.0
+  grade: conformant
+  protocol_version: '0.3'
+  preferred_transport: HTTP+JSON
+  hard_checks:
+    capabilities_is_object: true
+    protocol_version_present: true
+    skills_is_array: true
+  optional_fields_present:
+    - preferredTransport
+    - defaultInputModes
+    - defaultOutputModes
+  deviations:
+    - id: supportedInterfaces-instead-of-additionalInterfaces
+      note: >
+        The card carries `supportedInterfaces[]`; A2A 1.0.0 names that field
+        `additionalInterfaces`. Not a hard-check failure, but a pre-1.0 spelling.
+    - id: protocolVersion-pre-1.0
+      note: Declares protocolVersion "0.3" rather than a 1.x version.
+    - id: url-points-at-documentation-not-an-a2a-endpoint
+      note: >
+        `url` and every `supportedInterfaces[].url` resolve to https://docs.salesgraph.com/ — the
+        documentation site — rather than an A2A JSON-RPC endpoint. The card is a discovery
+        pointer to the docs and, through its skill, to the MCP server; it does not itself expose
+        a callable A2A task surface.
+card:
+  name: Salesgraph
+  description: Connect any MCP client or agent to Salesgraph's GTM research and audit tools.
+  url: https://docs.salesgraph.com/
+  version: 1.0.0
+  provider_organization: Salesgraph
+  documentation_url: https://docs.salesgraph.com/
+  capabilities:
+    streaming: false
+    pushNotifications: false
+  skills: 1
+  file: salesgraph-agent-card.json
+skills:
+  - id: salesgraph
+    name: Salesgraph
+    url: https://docs.salesgraph.com/.well-known/agent-skills/salesgraph/skill.md
+    captured_as: skills/salesgraph-published-skill.md
+related:
+  mcp: mcp/salesgraph-mcp.yml
+  agent_skill: skills/_index.yml
+x-evidence:
+  fetched: '2026-08-13'
+  url: https://docs.salesgraph.com/.well-known/agent-card.json
+  http_status: 200
+  content_type: application/json
+  rejected:
+    - url: https://salesgraph.com/.well-known/agent-card.json
+      http_status: 200
+      content_type: text/html
+      reason: SPA app-shell HTML, not an AgentCard document
+    - url: https://www.salesgraph.com/.well-known/agent-card.json
+      http_status: 200
+      content_type: text/html
+      reason: SPA app-shell HTML, not an AgentCard document
+    - url: https://docs.salesgraph.com/.well-known/agent.json
+      http_status: 404
+      reason: legacy path not served
