@@ -209,6 +209,8 @@ apis:
   - type: Authentication
     url: authentication/salesgraph-authentication.yml
 common:
+- type: Website
+  url: https://www.salesgraph.com/
 - type: Overlay
   url: overlays/salesgraph-openapi-overlay.yaml
 - type: DomainSecurity
