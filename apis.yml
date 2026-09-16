@@ -269,6 +269,8 @@ common:
   url: packages/salesgraph-packages.yml
 - type: Login
   url: https://salesgraph.com/login
+- type: Contact
+  url: mailto:support@salesgraph.com
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
