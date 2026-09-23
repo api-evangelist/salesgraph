@@ -27,28 +27,18 @@ server:
 deployment:
   mode: remote
   endpoint: https://salesgraph.com/api/mcp
-  install: null
-  package: null
-  auth: api-key
   verified: probed
   probe: gated
-  checked: '2026-08-13'
-  note: >
-    POST tools/list to https://salesgraph.com/api/mcp returns HTTP 307 to
-    https://www.salesgraph.com/api/mcp, which returns HTTP 401 {"error":"unauthorized"} with a
-    WWW-Authenticate: Bearer header — the server is live and the endpoint is real, but the tool
-    list requires an API key. Tool names, inputs, and sync/async mode below are taken from the
-    published tools overview and the provider's own Agent Skill, NOT from an authenticated
-    tools/list; per-tool JSON inputSchemas still require authenticated introspection.
-  no_stdio_package: >
-    Salesgraph ships no npx/pip MCP package. The only agent surface is the hosted remote
-    endpoint above.
+  checked: '2026-08-12'
+  source: catalog MCP census
 response_shape:
-  commands: >
-    Command tools return markdown in the standard MCP `content` text-block format.
-  oms: >
-    OMS tools additionally return `structuredContent` — `{ "result": ... }` on success and
-    `{ "error": { "code": ... } }` on failure — with the same JSON in the text block.
+  commands: 'Command tools return markdown in the standard MCP `content` text-block format.
+
+    '
+  oms: 'OMS tools additionally return `structuredContent` — `{ "result": ... }` on success and `{ "error":
+    { "code": ... } }` on failure — with the same JSON in the text block.
+
+    '
 tools:
 - name: research
   description: Cited markdown brief on any topic or company, from public data.
@@ -194,8 +184,8 @@ other_mcp_endpoints:
   discovered_at: https://docs.salesgraph.com/.well-known/mcp.json
   authentication: none
   first_party: false
-  note: >
-    Declared by the Mintlify docs platform, not by the Salesgraph product. It serves documentation
-    search over the docs site and is hosted on a mintlify.me subdomain, not a salesgraph.com host.
-    Recorded for completeness; it is NOT the Salesgraph API MCP server and is not wired as the
-    MCPServer pointer.
+  note: 'Declared by the Mintlify docs platform, not by the Salesgraph product. It serves documentation
+    search over the docs site and is hosted on a mintlify.me subdomain, not a salesgraph.com host. Recorded
+    for completeness; it is NOT the Salesgraph API MCP server and is not wired as the MCPServer pointer.
+
+    '

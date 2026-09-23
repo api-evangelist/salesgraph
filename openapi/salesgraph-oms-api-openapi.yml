@@ -1,15 +1,7 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
   title: Salesgraph REST OMS API
-  description: 'The same GTM research and audit engine behind the Salesgraph MCP server, exposed as a small REST
-    API under `/api/v1`. Command endpoints use API key authentication and return markdown (`Content-Type: text/markdown`)
-    on success; OMS endpoints return JSON; errors are returned as JSON. Synchronous commands (research, competitors,
-    help) return the markdown result inline; asynchronous audits (gtm-audit, audit) return a run id to poll. The
-    OMS (Opportunity Management System) endpoints query the organization''s own visible sales objects, traverse
-    their relationships, and manage continuous research watches. A separate unauthenticated Status API at `/api/status`
-    publishes component health.
-
-    '
+  description: The same GTM research and audit engine behind the Salesgraph MCP server, exposed as a small REST API under `/api/v1`.
   version: v1
   contact:
     name: Salesgraph Support
@@ -19,11 +11,7 @@ info:
     generated: '2026-08-13'
     method: generated
     source: https://docs.salesgraph.com/reference/rest-api.md
-    note: 'Faithfully modeled from the published Salesgraph REST API reference plus the provider''s own Agent Skill
-      at docs.salesgraph.com/.well-known/agent-skills/salesgraph/skill.md. The provider''s docs.salesgraph.com/api-reference/openapi.json
-      is STILL a Mintlify "OpenAPI Plant Store" placeholder (re-probed 2026-08-13, HTTP 200) and was NOT harvested.
-      Round 2 added the OMS endpoints, the org-audit poll, and the public /api/status endpoint, all of which the
-      provider documented after the round-1 pass.
+    note: 'Faithfully modeled from the published Salesgraph REST API reference plus the provider''s own Agent Skill at docs.salesgraph.com/.well-known/agent-skills/salesgraph/skill.md. The provider''s docs.salesgraph.com/api-reference/openapi.json is STILL a Mintlify "OpenAPI Plant Store" placeholder (re-probed 2026-08-13, HTTP 200) and was NOT harvested. Round 2 added the OMS endpoints, the org-audit poll, and the public /api/status endpoint, all of which the provider documented after the round-1 pass.
 
       '
 servers:
@@ -34,19 +22,13 @@ security:
 - apiKeyAuth: []
 tags:
 - name: OMS
-  description: 'Opportunity Management System — query the organization''s visible sales objects, traverse their
-    relationships, inspect provenance, and manage continuous research watches.
-
-    '
+  description: Opportunity Management System — query the organization's visible sales objects, traverse their relationships, inspect provenance, and manage continuous research watches.
 paths:
   /api/v1/oms/metadata:
     get:
       operationId: getOmsMetadata
       summary: Get visible OMS metadata
-      description: 'Returns the visible OMS ontology metadata — the object types, links, and properties the calling
-        organization can see. Responses are JSON.
-
-        '
+      description: Returns the visible OMS ontology metadata — the object types, links, and properties the calling organization can see. Responses are JSON.
       tags:
       - OMS
       responses:
@@ -62,10 +44,7 @@ paths:
     post:
       operationId: searchOmsObjects
       summary: Search visible OMS objects
-      description: 'Searches the visible OMS objects of one type. Returns a page of objects plus a `nextPageToken`
-        to continue, or `null` when the page is the last one.
-
-        '
+      description: Searches the visible OMS objects of one type. Returns a page of objects plus a `nextPageToken` to continue, or `null` when the page is the last one.
       tags:
       - OMS
       requestBody:
@@ -91,10 +70,7 @@ paths:
     post:
       operationId: getOmsObject
       summary: Get one visible OMS object
-      description: 'Fetches a single visible OMS object by its type and PUBLIC key (for example `domain:acme.com`)
-        — not an internal primary key.
-
-        '
+      description: Fetches a single visible OMS object by its type and PUBLIC key (for example `domain:acme.com`) — not an internal primary key.
       tags:
       - OMS
       requestBody:
@@ -122,10 +98,7 @@ paths:
     post:
       operationId: pivotOmsObject
       summary: Traverse a visible OMS relationship
-      description: 'Traverses a named link from one OMS object in a given direction — for example from an Account
-        to its Opportunities. Returns a page of objects plus a `nextPageToken`.
-
-        '
+      description: Traverses a named link from one OMS object in a given direction — for example from an Account to its Opportunities. Returns a page of objects plus a `nextPageToken`.
       tags:
       - OMS
       requestBody:
@@ -151,10 +124,7 @@ paths:
     post:
       operationId: getOmsProvenance
       summary: Get visible object provenance
-      description: 'Returns the data lineage of one OMS object — its properties, relationships, and history, with
-        the sources each came from.
-
-        '
+      description: Returns the data lineage of one OMS object — its properties, relationships, and history, with the sources each came from.
       tags:
       - OMS
       requestBody:
@@ -180,10 +150,7 @@ paths:
     get:
       operationId: listOmsWatches
       summary: List research watches
-      description: 'Lists the manageable continuous research watches for the organization. Pass `id` to fetch a
-        single watch. Returns `{ watches, nextCursor }`.
-
-        '
+      description: Lists the manageable continuous research watches for the organization. Pass `id` to fetch a single watch. Returns `{ watches, nextCursor }`.
       tags:
       - OMS
       parameters:
@@ -207,13 +174,7 @@ paths:
     post:
       operationId: createOmsWatch
       summary: Create a research watch
-      description: 'Creates a continuous research watch on an Account or Opportunity. Accepts an `idempotencyKey`
-        so a retried create does not produce a duplicate watch. Frequencies run from `1h` through 30 days; `lite`
-        watches require a monthly cost cap of at least 3000 micros and `base` watches at least 10000, both capped
-        at 100000000. A source policy accepts up to 25 valid domains per include or exclude list, with no domain
-        in both.
-
-        '
+      description: Creates a continuous research watch on an Account or Opportunity. Accepts an `idempotencyKey` so a retried create does not produce a duplicate watch. Frequencies run from `1h` through 30 days; `lite` watches require a monthly cost cap of at least 3000 micros and `base` watches at least 10000, both capped at 100000000. A source policy accepts up to 25 valid domains per include or exclude list, with no domain in both.
       tags:
       - OMS
       requestBody:
@@ -263,10 +224,7 @@ paths:
     post:
       operationId: requestOmsAction
       summary: Request an approved OMS action
-      description: 'Requests a human-approved OMS action — an opportunity update, a rep note, or a drafted follow-up
-        email. Returns 202 with a JSON approval request; the action is not applied until a person approves it.
-
-        '
+      description: Requests a human-approved OMS action — an opportunity update, a rep note, or a drafted follow-up email. Returns 202 with a JSON approval request; the action is not applied until a person approves it.
       tags:
       - OMS
       requestBody:
@@ -290,39 +248,7 @@ paths:
         '403':
           $ref: '#/components/responses/OmsAccessDenied'
 components:
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      description: 'Send your Salesgraph API key as `Authorization: Bearer sg_live_...`.'
-    apiKeyAuth:
-      type: apiKey
-      in: header
-      name: x-api-key
-      description: 'Alternative header — send your Salesgraph API key as `x-api-key: sg_live_...`.'
   responses:
-    NotFound:
-      description: Unknown command or run id (or an id belonging to another organization).
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    OmsAccessDenied:
-      description: The caller cannot see or manage the requested OMS resource.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            error: access_denied
-    OmsInvalidInput:
-      description: An OMS input validation error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            error: invalid_input
     Unauthorized:
       description: Missing, malformed, or revoked API key.
       headers:
@@ -336,64 +262,29 @@ components:
             $ref: '#/components/schemas/Error'
           example:
             error: unauthorized
+    OmsAccessDenied:
+      description: The caller cannot see or manage the requested OMS resource.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: access_denied
+    NotFound:
+      description: Unknown command or run id (or an id belonging to another organization).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    OmsInvalidInput:
+      description: An OMS input validation error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: invalid_input
   schemas:
-    Error:
-      type: object
-      required:
-      - error
-      properties:
-        error:
-          type: string
-          description: 'Machine-readable error code — `unauthorized`, `invalid_input`, `access_denied`, or `not_found`.
-
-            '
-    OmsObjectPage:
-      type: object
-      description: A page of OMS objects.
-      properties:
-        objects:
-          type: array
-          items:
-            type: object
-        nextPageToken:
-          type:
-          - string
-          - 'null'
-          description: Token for the next page, or null on the last page.
-    OmsObjectRef:
-      type: object
-      required:
-      - type
-      - key
-      description: A reference to one OMS object by type and PUBLIC key.
-      properties:
-        type:
-          type: string
-          description: The OMS object type (for example `Account` or `Opportunity`).
-          example: Account
-        key:
-          type: string
-          description: The public OMS key, not an internal primary key.
-          example: domain:acme.com
-    OmsPivotRequest:
-      type: object
-      required:
-      - type
-      - key
-      - link
-      - direction
-      description: A traversal of one named OMS relationship.
-      properties:
-        type:
-          type: string
-        key:
-          type: string
-        link:
-          type: string
-          description: The relationship name to traverse.
-        direction:
-          type: string
-          description: The direction to traverse the link in.
     OmsProvenance:
       type: object
       description: Data lineage for one OMS object.
@@ -427,8 +318,7 @@ components:
           description: Continuation token from a previous page.
     OmsSourcePolicy:
       type: object
-      description: 'Optional domain allow/deny policy. Each list accepts up to 25 valid domains and a domain may
-        not appear in both.
+      description: 'Optional domain allow/deny policy. Each list accepts up to 25 valid domains and a domain may not appear in both.
 
         '
       properties:
@@ -440,6 +330,103 @@ components:
           type: array
           items:
             type: string
+    OmsWatchRequest:
+      type: object
+      required:
+      - target
+      - query
+      - frequency
+      - processor
+      - monthlyCostCapMicros
+      description: A request to create a continuous research watch.
+      properties:
+        target:
+          $ref: '#/components/schemas/OmsObjectRef'
+        query:
+          type: string
+          description: What to monitor.
+        purpose:
+          type: string
+          description: Why the watch exists.
+        idempotencyKey:
+          type: string
+          description: 'Caller-supplied key that makes a retried create safe — resubmitting the same key does not create a second watch.
+
+            '
+        frequency:
+          type: string
+          description: How often the watch runs, from `1h` through 30 days.
+          example: 1d
+        processor:
+          type: string
+          enum:
+          - lite
+          - base
+          description: The processor tier, which sets the minimum monthly cost cap.
+        sourcePolicy:
+          $ref: '#/components/schemas/OmsSourcePolicy'
+        monthlyCostCapMicros:
+          type: integer
+          description: 'Monthly cost cap in micros — at least 3000 for `lite`, at least 10000 for `base`, at most 100000000 for either.
+
+            '
+    OmsObjectRef:
+      type: object
+      required:
+      - type
+      - key
+      description: A reference to one OMS object by type and PUBLIC key.
+      properties:
+        type:
+          type: string
+          description: The OMS object type (for example `Account` or `Opportunity`).
+          example: Account
+        key:
+          type: string
+          description: The public OMS key, not an internal primary key.
+          example: domain:acme.com
+    OmsWatchPage:
+      type: object
+      description: A page of research watches.
+      properties:
+        watches:
+          type: array
+          items:
+            $ref: '#/components/schemas/OmsWatch'
+        nextCursor:
+          type:
+          - string
+          - 'null'
+          description: Cursor for the next page, or null on the last page.
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+          description: 'Machine-readable error code — `unauthorized`, `invalid_input`, `access_denied`, or `not_found`.
+
+            '
+    OmsPivotRequest:
+      type: object
+      required:
+      - type
+      - key
+      - link
+      - direction
+      description: A traversal of one named OMS relationship.
+      properties:
+        type:
+          type: string
+        key:
+          type: string
+        link:
+          type: string
+          description: The relationship name to traverse.
+        direction:
+          type: string
+          description: The direction to traverse the link in.
     OmsWatch:
       type: object
       description: A continuous research watch.
@@ -464,58 +451,26 @@ components:
         updatedAt:
           type: string
           format: date-time
-    OmsWatchPage:
+    OmsObjectPage:
       type: object
-      description: A page of research watches.
+      description: A page of OMS objects.
       properties:
-        watches:
+        objects:
           type: array
           items:
-            $ref: '#/components/schemas/OmsWatch'
-        nextCursor:
+            type: object
+        nextPageToken:
           type:
           - string
           - 'null'
-          description: Cursor for the next page, or null on the last page.
-    OmsWatchRequest:
-      type: object
-      required:
-      - target
-      - query
-      - frequency
-      - processor
-      - monthlyCostCapMicros
-      description: A request to create a continuous research watch.
-      properties:
-        target:
-          $ref: '#/components/schemas/OmsObjectRef'
-        query:
-          type: string
-          description: What to monitor.
-        purpose:
-          type: string
-          description: Why the watch exists.
-        idempotencyKey:
-          type: string
-          description: 'Caller-supplied key that makes a retried create safe — resubmitting the same key does not
-            create a second watch.
-
-            '
-        frequency:
-          type: string
-          description: How often the watch runs, from `1h` through 30 days.
-          example: 1d
-        processor:
-          type: string
-          enum:
-          - lite
-          - base
-          description: The processor tier, which sets the minimum monthly cost cap.
-        sourcePolicy:
-          $ref: '#/components/schemas/OmsSourcePolicy'
-        monthlyCostCapMicros:
-          type: integer
-          description: 'Monthly cost cap in micros — at least 3000 for `lite`, at least 10000 for `base`, at most
-            100000000 for either.
-
-            '
+          description: Token for the next page, or null on the last page.
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Send your Salesgraph API key as `Authorization: Bearer sg_live_...`.'
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+      description: 'Alternative header — send your Salesgraph API key as `x-api-key: sg_live_...`.'
