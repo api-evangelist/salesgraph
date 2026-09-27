@@ -109,12 +109,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    OnboardingRequired:
-      description: Onboarding required — finish your org's sales profile before running audits.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
     Unauthorized:
       description: Missing, malformed, or revoked API key.
       headers:
@@ -128,6 +122,12 @@ components:
             $ref: '#/components/schemas/Error'
           example:
             error: unauthorized
+    OnboardingRequired:
+      description: Onboarding required — finish your org's sales profile before running audits.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   securitySchemes:
     bearerAuth:
       type: http

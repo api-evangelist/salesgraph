@@ -100,44 +100,6 @@ paths:
         '429':
           $ref: '#/components/responses/RateLimited'
 components:
-  responses:
-    Unauthorized:
-      description: Missing, malformed, or revoked API key.
-      headers:
-        WWW-Authenticate:
-          schema:
-            type: string
-            example: Bearer
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            error: unauthorized
-    RateLimited:
-      description: Rate limited — back off and retry.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: Unknown command or run id (or an id belonging to another organization).
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    BadRequest:
-      description: Invalid arguments.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    OnboardingRequired:
-      description: Onboarding required — finish your org's sales profile before running audits.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   schemas:
     Error:
       type: object
@@ -165,6 +127,44 @@ components:
         userContext:
           type: string
           description: Optional extra context passed to the command.
+  responses:
+    RateLimited:
+      description: Rate limited — back off and retry.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    OnboardingRequired:
+      description: Onboarding required — finish your org's sales profile before running audits.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: Invalid arguments.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Unknown command or run id (or an id belonging to another organization).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing, malformed, or revoked API key.
+      headers:
+        WWW-Authenticate:
+          schema:
+            type: string
+            example: Bearer
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: unauthorized
   securitySchemes:
     bearerAuth:
       type: http

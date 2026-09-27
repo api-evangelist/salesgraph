@@ -248,88 +248,32 @@ paths:
         '403':
           $ref: '#/components/responses/OmsAccessDenied'
 components:
-  responses:
-    Unauthorized:
-      description: Missing, malformed, or revoked API key.
-      headers:
-        WWW-Authenticate:
-          schema:
-            type: string
-            example: Bearer
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            error: unauthorized
-    OmsAccessDenied:
-      description: The caller cannot see or manage the requested OMS resource.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            error: access_denied
-    NotFound:
-      description: Unknown command or run id (or an id belonging to another organization).
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    OmsInvalidInput:
-      description: An OMS input validation error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            error: invalid_input
   schemas:
-    OmsProvenance:
+    Error:
       type: object
-      description: Data lineage for one OMS object.
+      required:
+      - error
       properties:
-        properties:
-          type: array
-          items:
-            type: object
-        relationships:
-          type: array
-          items:
-            type: object
-        history:
-          type: array
-          items:
-            type: object
-    OmsSearchRequest:
+        error:
+          type: string
+          description: 'Machine-readable error code — `unauthorized`, `invalid_input`, `access_denied`, or `not_found`.
+
+            '
+    OmsObjectRef:
       type: object
       required:
       - type
-      description: A search over visible OMS objects of one type.
+      - key
+      description: A reference to one OMS object by type and PUBLIC key.
       properties:
         type:
           type: string
-          description: The OMS object type to search.
-        query:
+          description: The OMS object type (for example `Account` or `Opportunity`).
+          example: Account
+        key:
           type: string
-          description: The search query.
-        pageToken:
-          type: string
-          description: Continuation token from a previous page.
-    OmsSourcePolicy:
-      type: object
-      description: 'Optional domain allow/deny policy. Each list accepts up to 25 valid domains and a domain may not appear in both.
-
-        '
-      properties:
-        includeDomains:
-          type: array
-          items:
-            type: string
-        excludeDomains:
-          type: array
-          items:
-            type: string
+          description: The public OMS key, not an internal primary key.
+          example: domain:acme.com
     OmsWatchRequest:
       type: object
       required:
@@ -370,21 +314,6 @@ components:
           description: 'Monthly cost cap in micros — at least 3000 for `lite`, at least 10000 for `base`, at most 100000000 for either.
 
             '
-    OmsObjectRef:
-      type: object
-      required:
-      - type
-      - key
-      description: A reference to one OMS object by type and PUBLIC key.
-      properties:
-        type:
-          type: string
-          description: The OMS object type (for example `Account` or `Opportunity`).
-          example: Account
-        key:
-          type: string
-          description: The public OMS key, not an internal primary key.
-          example: domain:acme.com
     OmsWatchPage:
       type: object
       description: A page of research watches.
@@ -398,16 +327,22 @@ components:
           - string
           - 'null'
           description: Cursor for the next page, or null on the last page.
-    Error:
+    OmsProvenance:
       type: object
-      required:
-      - error
+      description: Data lineage for one OMS object.
       properties:
-        error:
-          type: string
-          description: 'Machine-readable error code — `unauthorized`, `invalid_input`, `access_denied`, or `not_found`.
-
-            '
+        properties:
+          type: array
+          items:
+            type: object
+        relationships:
+          type: array
+          items:
+            type: object
+        history:
+          type: array
+          items:
+            type: object
     OmsPivotRequest:
       type: object
       required:
@@ -427,6 +362,20 @@ components:
         direction:
           type: string
           description: The direction to traverse the link in.
+    OmsSourcePolicy:
+      type: object
+      description: 'Optional domain allow/deny policy. Each list accepts up to 25 valid domains and a domain may not appear in both.
+
+        '
+      properties:
+        includeDomains:
+          type: array
+          items:
+            type: string
+        excludeDomains:
+          type: array
+          items:
+            type: string
     OmsWatch:
       type: object
       description: A continuous research watch.
@@ -464,6 +413,57 @@ components:
           - string
           - 'null'
           description: Token for the next page, or null on the last page.
+    OmsSearchRequest:
+      type: object
+      required:
+      - type
+      description: A search over visible OMS objects of one type.
+      properties:
+        type:
+          type: string
+          description: The OMS object type to search.
+        query:
+          type: string
+          description: The search query.
+        pageToken:
+          type: string
+          description: Continuation token from a previous page.
+  responses:
+    NotFound:
+      description: Unknown command or run id (or an id belonging to another organization).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    OmsAccessDenied:
+      description: The caller cannot see or manage the requested OMS resource.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: access_denied
+    OmsInvalidInput:
+      description: An OMS input validation error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: invalid_input
+    Unauthorized:
+      description: Missing, malformed, or revoked API key.
+      headers:
+        WWW-Authenticate:
+          schema:
+            type: string
+            example: Bearer
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: unauthorized
   securitySchemes:
     bearerAuth:
       type: http
