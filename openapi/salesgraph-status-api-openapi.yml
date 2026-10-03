@@ -41,6 +41,21 @@ paths:
                 $ref: '#/components/schemas/PlatformStatus'
 components:
   schemas:
+    StatusComponent:
+      type: object
+      description: One monitored platform component.
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+        lastCheckedAt:
+          type: string
+          format: date-time
     PlatformStatus:
       type: object
       description: Public platform status document.
@@ -72,21 +87,6 @@ components:
           type: array
           items:
             type: object
-    StatusComponent:
-      type: object
-      description: One monitored platform component.
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        description:
-          type: string
-        status:
-          type: string
-        lastCheckedAt:
-          type: string
-          format: date-time
   securitySchemes:
     bearerAuth:
       type: http

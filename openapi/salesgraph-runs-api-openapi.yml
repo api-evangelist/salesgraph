@@ -64,24 +64,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 components:
-  schemas:
-    Error:
-      type: object
-      required:
-      - error
-      properties:
-        error:
-          type: string
-          description: 'Machine-readable error code — `unauthorized`, `invalid_input`, `access_denied`, or `not_found`.
-
-            '
   responses:
-    NotFound:
-      description: Unknown command or run id (or an id belonging to another organization).
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
     Unauthorized:
       description: Missing, malformed, or revoked API key.
       headers:
@@ -95,6 +78,23 @@ components:
             $ref: '#/components/schemas/Error'
           example:
             error: unauthorized
+    NotFound:
+      description: Unknown command or run id (or an id belonging to another organization).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+          description: 'Machine-readable error code — `unauthorized`, `invalid_input`, `access_denied`, or `not_found`.
+
+            '
   securitySchemes:
     bearerAuth:
       type: http

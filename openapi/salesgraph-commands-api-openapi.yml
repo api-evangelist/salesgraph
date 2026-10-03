@@ -100,36 +100,28 @@ paths:
         '429':
           $ref: '#/components/responses/RateLimited'
 components:
-  schemas:
-    Error:
-      type: object
-      required:
-      - error
-      properties:
-        error:
-          type: string
-          description: 'Machine-readable error code — `unauthorized`, `invalid_input`, `access_denied`, or `not_found`.
-
-            '
-    CommandArguments:
-      type: object
-      description: Command-specific arguments plus optional shared context.
-      properties:
-        topic:
-          type: string
-          description: Topic or company for the research command.
-        company:
-          type: string
-          description: Company name for the competitors command.
-        website:
-          type: string
-          description: Prospect website (domain or full URL) for the gtm-audit command.
-        userContext:
-          type: string
-          description: Optional extra context passed to the command.
   responses:
+    Unauthorized:
+      description: Missing, malformed, or revoked API key.
+      headers:
+        WWW-Authenticate:
+          schema:
+            type: string
+            example: Bearer
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: unauthorized
     RateLimited:
       description: Rate limited — back off and retry.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Unknown command or run id (or an id belonging to another organization).
       content:
         application/json:
           schema:
@@ -146,25 +138,33 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    NotFound:
-      description: Unknown command or run id (or an id belonging to another organization).
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing, malformed, or revoked API key.
-      headers:
-        WWW-Authenticate:
-          schema:
-            type: string
-            example: Bearer
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            error: unauthorized
+  schemas:
+    CommandArguments:
+      type: object
+      description: Command-specific arguments plus optional shared context.
+      properties:
+        topic:
+          type: string
+          description: Topic or company for the research command.
+        company:
+          type: string
+          description: Company name for the competitors command.
+        website:
+          type: string
+          description: Prospect website (domain or full URL) for the gtm-audit command.
+        userContext:
+          type: string
+          description: Optional extra context passed to the command.
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+          description: 'Machine-readable error code — `unauthorized`, `invalid_input`, `access_denied`, or `not_found`.
+
+            '
   securitySchemes:
     bearerAuth:
       type: http
