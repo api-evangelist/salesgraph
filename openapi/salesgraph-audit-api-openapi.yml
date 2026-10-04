@@ -92,6 +92,12 @@ paths:
           $ref: '#/components/responses/NotFound'
 components:
   responses:
+    NotFound:
+      description: Unknown command or run id (or an id belonging to another organization).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
     Unauthorized:
       description: Missing, malformed, or revoked API key.
       headers:
@@ -107,12 +113,6 @@ components:
             error: unauthorized
     OnboardingRequired:
       description: Onboarding required — finish your org's sales profile before running audits.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: Unknown command or run id (or an id belonging to another organization).
       content:
         application/json:
           schema:

@@ -249,20 +249,6 @@ paths:
           $ref: '#/components/responses/OmsAccessDenied'
 components:
   schemas:
-    OmsSourcePolicy:
-      type: object
-      description: 'Optional domain allow/deny policy. Each list accepts up to 25 valid domains and a domain may not appear in both.
-
-        '
-      properties:
-        includeDomains:
-          type: array
-          items:
-            type: string
-        excludeDomains:
-          type: array
-          items:
-            type: string
     OmsSearchRequest:
       type: object
       required:
@@ -278,6 +264,114 @@ components:
         pageToken:
           type: string
           description: Continuation token from a previous page.
+    OmsWatchPage:
+      type: object
+      description: A page of research watches.
+      properties:
+        watches:
+          type: array
+          items:
+            $ref: '#/components/schemas/OmsWatch'
+        nextCursor:
+          type:
+          - string
+          - 'null'
+          description: Cursor for the next page, or null on the last page.
+    OmsPivotRequest:
+      type: object
+      required:
+      - type
+      - key
+      - link
+      - direction
+      description: A traversal of one named OMS relationship.
+      properties:
+        type:
+          type: string
+        key:
+          type: string
+        link:
+          type: string
+          description: The relationship name to traverse.
+        direction:
+          type: string
+          description: The direction to traverse the link in.
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+          description: 'Machine-readable error code — `unauthorized`, `invalid_input`, `access_denied`, or `not_found`.
+
+            '
+    OmsObjectRef:
+      type: object
+      required:
+      - type
+      - key
+      description: A reference to one OMS object by type and PUBLIC key.
+      properties:
+        type:
+          type: string
+          description: The OMS object type (for example `Account` or `Opportunity`).
+          example: Account
+        key:
+          type: string
+          description: The public OMS key, not an internal primary key.
+          example: domain:acme.com
+    OmsObjectPage:
+      type: object
+      description: A page of OMS objects.
+      properties:
+        objects:
+          type: array
+          items:
+            type: object
+        nextPageToken:
+          type:
+          - string
+          - 'null'
+          description: Token for the next page, or null on the last page.
+    OmsWatch:
+      type: object
+      description: A continuous research watch.
+      properties:
+        id:
+          type: string
+        target:
+          $ref: '#/components/schemas/OmsObjectRef'
+        query:
+          type: string
+        frequency:
+          type: string
+        processor:
+          type: string
+        monthlyCostCapMicros:
+          type: integer
+        status:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    OmsSourcePolicy:
+      type: object
+      description: 'Optional domain allow/deny policy. Each list accepts up to 25 valid domains and a domain may not appear in both.
+
+        '
+      properties:
+        includeDomains:
+          type: array
+          items:
+            type: string
+        excludeDomains:
+          type: array
+          items:
+            type: string
     OmsProvenance:
       type: object
       description: Data lineage for one OMS object.
@@ -334,101 +428,15 @@ components:
           description: 'Monthly cost cap in micros — at least 3000 for `lite`, at least 10000 for `base`, at most 100000000 for either.
 
             '
-    OmsObjectRef:
-      type: object
-      required:
-      - type
-      - key
-      description: A reference to one OMS object by type and PUBLIC key.
-      properties:
-        type:
-          type: string
-          description: The OMS object type (for example `Account` or `Opportunity`).
-          example: Account
-        key:
-          type: string
-          description: The public OMS key, not an internal primary key.
-          example: domain:acme.com
-    OmsWatchPage:
-      type: object
-      description: A page of research watches.
-      properties:
-        watches:
-          type: array
-          items:
-            $ref: '#/components/schemas/OmsWatch'
-        nextCursor:
-          type:
-          - string
-          - 'null'
-          description: Cursor for the next page, or null on the last page.
-    OmsWatch:
-      type: object
-      description: A continuous research watch.
-      properties:
-        id:
-          type: string
-        target:
-          $ref: '#/components/schemas/OmsObjectRef'
-        query:
-          type: string
-        frequency:
-          type: string
-        processor:
-          type: string
-        monthlyCostCapMicros:
-          type: integer
-        status:
-          type: string
-        createdAt:
-          type: string
-          format: date-time
-        updatedAt:
-          type: string
-          format: date-time
-    OmsPivotRequest:
-      type: object
-      required:
-      - type
-      - key
-      - link
-      - direction
-      description: A traversal of one named OMS relationship.
-      properties:
-        type:
-          type: string
-        key:
-          type: string
-        link:
-          type: string
-          description: The relationship name to traverse.
-        direction:
-          type: string
-          description: The direction to traverse the link in.
-    OmsObjectPage:
-      type: object
-      description: A page of OMS objects.
-      properties:
-        objects:
-          type: array
-          items:
-            type: object
-        nextPageToken:
-          type:
-          - string
-          - 'null'
-          description: Token for the next page, or null on the last page.
-    Error:
-      type: object
-      required:
-      - error
-      properties:
-        error:
-          type: string
-          description: 'Machine-readable error code — `unauthorized`, `invalid_input`, `access_denied`, or `not_found`.
-
-            '
   responses:
+    OmsInvalidInput:
+      description: An OMS input validation error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: invalid_input
     NotFound:
       description: Unknown command or run id (or an id belonging to another organization).
       content:
@@ -448,14 +456,6 @@ components:
             $ref: '#/components/schemas/Error'
           example:
             error: unauthorized
-    OmsInvalidInput:
-      description: An OMS input validation error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            error: invalid_input
     OmsAccessDenied:
       description: The caller cannot see or manage the requested OMS resource.
       content:

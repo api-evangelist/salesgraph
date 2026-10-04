@@ -101,6 +101,18 @@ paths:
           $ref: '#/components/responses/RateLimited'
 components:
   responses:
+    BadRequest:
+      description: Invalid arguments.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Unknown command or run id (or an id belonging to another organization).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
     Unauthorized:
       description: Missing, malformed, or revoked API key.
       headers:
@@ -114,26 +126,14 @@ components:
             $ref: '#/components/schemas/Error'
           example:
             error: unauthorized
-    RateLimited:
-      description: Rate limited — back off and retry.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: Unknown command or run id (or an id belonging to another organization).
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
     OnboardingRequired:
       description: Onboarding required — finish your org's sales profile before running audits.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    BadRequest:
-      description: Invalid arguments.
+    RateLimited:
+      description: Rate limited — back off and retry.
       content:
         application/json:
           schema:
